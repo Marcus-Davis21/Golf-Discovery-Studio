@@ -1,0 +1,8 @@
+{
+  "name": "Remix Golf Discovery Studio",
+  "description": "Stakeholder testing prototype for golf customer discovery research with tailored cohort questions, simulated recording controls, and a 5-minute guided walkthrough.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
