@@ -1,0 +1,1264 @@
+{
+  "sessions": [],
+  "participants": [
+    {
+      "id": "ASP-01",
+      "name": "Sarah Lin",
+      "cohortId": "aspiring",
+      "email": "sarah.lin@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-02",
+      "name": "David Okafor",
+      "cohortId": "aspiring",
+      "email": "david.okafor@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-03",
+      "name": "Elena Rostova",
+      "cohortId": "aspiring",
+      "email": "elena.rostova@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-04",
+      "name": "Mateo Morales",
+      "cohortId": "aspiring",
+      "email": "mateo.morales@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-05",
+      "name": "Chloe Bennett",
+      "cohortId": "aspiring",
+      "email": "chloe.bennett@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-06",
+      "name": "Jordan Lee",
+      "cohortId": "aspiring",
+      "email": "jordan.lee@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-07",
+      "name": "Hannah Schmidt",
+      "cohortId": "aspiring",
+      "email": "hannah.schmidt@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-08",
+      "name": "Tariq Vance",
+      "cohortId": "aspiring",
+      "email": "tariq.vance@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-09",
+      "name": "Avery Brooks",
+      "cohortId": "aspiring",
+      "email": "avery.brooks@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-10",
+      "name": "Liam Gallagher",
+      "cohortId": "aspiring",
+      "email": "liam.gallagher@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-11",
+      "name": "Mei-Ling Zhou",
+      "cohortId": "aspiring",
+      "email": "mei.ling.zhou@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-12",
+      "name": "Lucas Silva",
+      "cohortId": "aspiring",
+      "email": "lucas.silva@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-13",
+      "name": "Zoe Washington",
+      "cohortId": "aspiring",
+      "email": "zoe.washington@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-14",
+      "name": "Ethan Miller",
+      "cohortId": "aspiring",
+      "email": "ethan.miller@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-15",
+      "name": "Pooja Sharma",
+      "cohortId": "aspiring",
+      "email": "pooja.sharma@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-16",
+      "name": "Noah Hernandez",
+      "cohortId": "aspiring",
+      "email": "noah.hernandez@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-17",
+      "name": "Isabella King",
+      "cohortId": "aspiring",
+      "email": "isabella.king@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-18",
+      "name": "Julian Ward",
+      "cohortId": "aspiring",
+      "email": "julian.ward@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-19",
+      "name": "Sophia Rossi",
+      "cohortId": "aspiring",
+      "email": "sophia.rossi@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-20",
+      "name": "Caleb Zhang",
+      "cohortId": "aspiring",
+      "email": "caleb.zhang@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-21",
+      "name": "Amber Robinson",
+      "cohortId": "aspiring",
+      "email": "amber.robinson@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-22",
+      "name": "Diego Santos",
+      "cohortId": "aspiring",
+      "email": "diego.santos@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-23",
+      "name": "Mia Campbell",
+      "cohortId": "aspiring",
+      "email": "mia.campbell@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-24",
+      "name": "Ryan Murphy",
+      "cohortId": "aspiring",
+      "email": "ryan.murphy@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "ASP-25",
+      "name": "Grace Kelly",
+      "cohortId": "aspiring",
+      "email": "grace.kelly@study.io",
+      "experienceLevel": "0 rounds (Pure Beginner)",
+      "handicapOrRounds": "Never played on course",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-01",
+      "name": "Jason Tyler",
+      "cohortId": "novice",
+      "email": "jason.tyler@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-02",
+      "name": "Priya Patel",
+      "cohortId": "novice",
+      "email": "priya.patel@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-03",
+      "name": "Brendan Vance",
+      "cohortId": "novice",
+      "email": "brendan.vance@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-04",
+      "name": "Maya Goldstein",
+      "cohortId": "novice",
+      "email": "maya.goldstein@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-05",
+      "name": "Liam O’Connor",
+      "cohortId": "novice",
+      "email": "liam.o.connor@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-06",
+      "name": "Samantha Fox",
+      "cohortId": "novice",
+      "email": "samantha.fox@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-07",
+      "name": "Tyler Ramirez",
+      "cohortId": "novice",
+      "email": "tyler.ramirez@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-08",
+      "name": "Kaitlyn Evans",
+      "cohortId": "novice",
+      "email": "kaitlyn.evans@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-09",
+      "name": "Dylan Cooper",
+      "cohortId": "novice",
+      "email": "dylan.cooper@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-10",
+      "name": "Nadia Al-Hassan",
+      "cohortId": "novice",
+      "email": "nadia.al.hassan@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-11",
+      "name": "Oliver Reed",
+      "cohortId": "novice",
+      "email": "oliver.reed@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-12",
+      "name": "Haley Jenkins",
+      "cohortId": "novice",
+      "email": "haley.jenkins@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-13",
+      "name": "Marcus Cruz",
+      "cohortId": "novice",
+      "email": "marcus.cruz@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-14",
+      "name": "Brooke Stewart",
+      "cohortId": "novice",
+      "email": "brooke.stewart@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-15",
+      "name": "Connor Murphy",
+      "cohortId": "novice",
+      "email": "connor.murphy@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-16",
+      "name": "Destiny Morgan",
+      "cohortId": "novice",
+      "email": "destiny.morgan@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-17",
+      "name": "Zachary Cole",
+      "cohortId": "novice",
+      "email": "zachary.cole@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-18",
+      "name": "Lauren Price",
+      "cohortId": "novice",
+      "email": "lauren.price@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-19",
+      "name": "Christian Bell",
+      "cohortId": "novice",
+      "email": "christian.bell@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-20",
+      "name": "Victoria Chen",
+      "cohortId": "novice",
+      "email": "victoria.chen@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-21",
+      "name": "Sean Kelly",
+      "cohortId": "novice",
+      "email": "sean.kelly@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-22",
+      "name": "Gabriella Gomez",
+      "cohortId": "novice",
+      "email": "gabriella.gomez@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-23",
+      "name": "Austin Bailey",
+      "cohortId": "novice",
+      "email": "austin.bailey@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-24",
+      "name": "Natalie Howard",
+      "cohortId": "novice",
+      "email": "natalie.howard@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "NOV-25",
+      "name": "Justin Ward",
+      "cohortId": "novice",
+      "email": "justin.ward@study.io",
+      "experienceLevel": "Novice (< 1 year)",
+      "handicapOrRounds": "Score ~110-125",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-01",
+      "name": "Marcus Chen",
+      "cohortId": "amateur",
+      "email": "marcus.chen@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 18.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-02",
+      "name": "Rachel Adams",
+      "cohortId": "amateur",
+      "email": "rachel.adams@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 19.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-03",
+      "name": "Derek Foster",
+      "cohortId": "amateur",
+      "email": "derek.foster@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 20.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-04",
+      "name": "Aisha Al-Mansoor",
+      "cohortId": "amateur",
+      "email": "aisha.al.mansoor@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 21.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-05",
+      "name": "Carlos Mendez",
+      "cohortId": "amateur",
+      "email": "carlos.mendez@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 22.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-06",
+      "name": "Kimberly Scott",
+      "cohortId": "amateur",
+      "email": "kimberly.scott@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 23.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-07",
+      "name": "Brett Larson",
+      "cohortId": "amateur",
+      "email": "brett.larson@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 24.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-08",
+      "name": "Danielle Kim",
+      "cohortId": "amateur",
+      "email": "danielle.kim@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 25.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-09",
+      "name": "Eric Thornton",
+      "cohortId": "amateur",
+      "email": "eric.thornton@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 18.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-10",
+      "name": "Chelsea Diaz",
+      "cohortId": "amateur",
+      "email": "chelsea.diaz@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 19.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-11",
+      "name": "Travis Meyer",
+      "cohortId": "amateur",
+      "email": "travis.meyer@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 20.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-12",
+      "name": "Stephanie Hall",
+      "cohortId": "amateur",
+      "email": "stephanie.hall@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 21.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-13",
+      "name": "Adam Griffin",
+      "cohortId": "amateur",
+      "email": "adam.griffin@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 22.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-14",
+      "name": "Megan Simmons",
+      "cohortId": "amateur",
+      "email": "megan.simmons@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 23.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-15",
+      "name": "Kyle Foster",
+      "cohortId": "amateur",
+      "email": "kyle.foster@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 24.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-16",
+      "name": "Jessica Nguyen",
+      "cohortId": "amateur",
+      "email": "jessica.nguyen@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 25.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-17",
+      "name": "Brian Hayes",
+      "cohortId": "amateur",
+      "email": "brian.hayes@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 18.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-18",
+      "name": "Laura Martinez",
+      "cohortId": "amateur",
+      "email": "laura.martinez@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 19.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-19",
+      "name": "Keith Fletcher",
+      "cohortId": "amateur",
+      "email": "keith.fletcher@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 20.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-20",
+      "name": "Heather Watson",
+      "cohortId": "amateur",
+      "email": "heather.watson@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 21.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-21",
+      "name": "Patrick Ross",
+      "cohortId": "amateur",
+      "email": "patrick.ross@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 22.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-22",
+      "name": "Erica Patterson",
+      "cohortId": "amateur",
+      "email": "erica.patterson@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 23.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-23",
+      "name": "Corey Bryant",
+      "cohortId": "amateur",
+      "email": "corey.bryant@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 24.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-24",
+      "name": "Vanessa Powell",
+      "cohortId": "amateur",
+      "email": "vanessa.powell@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 25.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "AM-25",
+      "name": "Devin Cox",
+      "cohortId": "amateur",
+      "email": "devin.cox@study.io",
+      "experienceLevel": "Amateur (2-5 years)",
+      "handicapOrRounds": "Handicap: 18.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-01",
+      "name": "Justin Becker",
+      "cohortId": "mid",
+      "email": "justin.becker@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 8.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-02",
+      "name": "Naomi Tanaka",
+      "cohortId": "mid",
+      "email": "naomi.tanaka@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 9.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-03",
+      "name": "Trevor Higgins",
+      "cohortId": "mid",
+      "email": "trevor.higgins@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 10.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-04",
+      "name": "Danielle Wu",
+      "cohortId": "mid",
+      "email": "danielle.wu@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 11.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-05",
+      "name": "Evan Kirkpatrick",
+      "cohortId": "mid",
+      "email": "evan.kirkpatrick@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 12.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-06",
+      "name": "Mitchell Todd",
+      "cohortId": "mid",
+      "email": "mitchell.todd@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 13.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-07",
+      "name": "Audrey Vance",
+      "cohortId": "mid",
+      "email": "audrey.vance@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 8.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-08",
+      "name": "Gavin Rivera",
+      "cohortId": "mid",
+      "email": "gavin.rivera@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 9.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-09",
+      "name": "Courtney Baker",
+      "cohortId": "mid",
+      "email": "courtney.baker@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 10.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-10",
+      "name": "Lance Chapman",
+      "cohortId": "mid",
+      "email": "lance.chapman@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 11.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-11",
+      "name": "Paige Hoffman",
+      "cohortId": "mid",
+      "email": "paige.hoffman@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 12.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-12",
+      "name": "Trevor Knight",
+      "cohortId": "mid",
+      "email": "trevor.knight@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 13.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-13",
+      "name": "Valerie Ramos",
+      "cohortId": "mid",
+      "email": "valerie.ramos@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 8.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-14",
+      "name": "Dominic Stone",
+      "cohortId": "mid",
+      "email": "dominic.stone@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 9.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-15",
+      "name": "Kelly Douglas",
+      "cohortId": "mid",
+      "email": "kelly.douglas@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 10.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-16",
+      "name": "Phillip Walsh",
+      "cohortId": "mid",
+      "email": "phillip.walsh@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 11.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-17",
+      "name": "Monica Weaver",
+      "cohortId": "mid",
+      "email": "monica.weaver@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 12.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-18",
+      "name": "Garrett Larson",
+      "cohortId": "mid",
+      "email": "garrett.larson@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 13.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-19",
+      "name": "Diana Pierce",
+      "cohortId": "mid",
+      "email": "diana.pierce@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 8.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-20",
+      "name": "Raymond Fuller",
+      "cohortId": "mid",
+      "email": "raymond.fuller@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 9.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-21",
+      "name": "Alicia Wagner",
+      "cohortId": "mid",
+      "email": "alicia.wagner@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 10.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-22",
+      "name": "Seth Reynolds",
+      "cohortId": "mid",
+      "email": "seth.reynolds@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 11.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-23",
+      "name": "Taylor Morrison",
+      "cohortId": "mid",
+      "email": "taylor.morrison@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 12.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-24",
+      "name": "Blake Snyder",
+      "cohortId": "mid",
+      "email": "blake.snyder@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 13.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "MID-25",
+      "name": "Cynthia Olson",
+      "cohortId": "mid",
+      "email": "cynthia.olson@study.io",
+      "experienceLevel": "Mid-Level (5-10 years)",
+      "handicapOrRounds": "Handicap: 8.0",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-01",
+      "name": "Greg Callahan, PGA",
+      "cohortId": "coach",
+      "email": "greg.callahan..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-02",
+      "name": "Kelly McAllister, TPI",
+      "cohortId": "coach",
+      "email": "kelly.mcallister..tpi@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-03",
+      "name": "Arthur Sterling, PGA",
+      "cohortId": "coach",
+      "email": "arthur.sterling..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-04",
+      "name": "Monique Dupont, LPGA",
+      "cohortId": "coach",
+      "email": "monique.dupont..lpga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-05",
+      "name": "Darnell Washington, PGA",
+      "cohortId": "coach",
+      "email": "darnell.washington..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-06",
+      "name": "Victor Hernandez, PGA",
+      "cohortId": "coach",
+      "email": "victor.hernandez..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-07",
+      "name": "Sandra O’Neill, TPI",
+      "cohortId": "coach",
+      "email": "sandra.o.neill..tpi@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-08",
+      "name": "Bradley Chen, PGA",
+      "cohortId": "coach",
+      "email": "bradley.chen..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-09",
+      "name": "Evelyn St. Claire",
+      "cohortId": "coach",
+      "email": "evelyn.st..claire@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-10",
+      "name": "Charles Montgomery, PGA",
+      "cohortId": "coach",
+      "email": "charles.montgomery..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-11",
+      "name": "Hannah Lindqvist",
+      "cohortId": "coach",
+      "email": "hannah.lindqvist@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-12",
+      "name": "Terrence Boone, PGA",
+      "cohortId": "coach",
+      "email": "terrence.boone..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-13",
+      "name": "Jocelyn Alvarez, PGA",
+      "cohortId": "coach",
+      "email": "jocelyn.alvarez..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-14",
+      "name": "Robert MacIntyre, PGA",
+      "cohortId": "coach",
+      "email": "robert.macintyre..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-15",
+      "name": "Dana Fletcher, TPI",
+      "cohortId": "coach",
+      "email": "dana.fletcher..tpi@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-16",
+      "name": "Jerome Dubois",
+      "cohortId": "coach",
+      "email": "jerome.dubois@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-17",
+      "name": "Kirsten Nielsen, LPGA",
+      "cohortId": "coach",
+      "email": "kirsten.nielsen..lpga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-18",
+      "name": "Anthony Russo, PGA",
+      "cohortId": "coach",
+      "email": "anthony.russo..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-19",
+      "name": "Yvette Fontaine",
+      "cohortId": "coach",
+      "email": "yvette.fontaine@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-20",
+      "name": "Wade Hampton, PGA",
+      "cohortId": "coach",
+      "email": "wade.hampton..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-21",
+      "name": "Simon Gallagher",
+      "cohortId": "coach",
+      "email": "simon.gallagher@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-22",
+      "name": "Clara Vance, TPI",
+      "cohortId": "coach",
+      "email": "clara.vance..tpi@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-23",
+      "name": "Roger Whitmore, PGA",
+      "cohortId": "coach",
+      "email": "roger.whitmore..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-24",
+      "name": "Bethany Shaw, LPGA",
+      "cohortId": "coach",
+      "email": "bethany.shaw..lpga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    },
+    {
+      "id": "PRO-25",
+      "name": "Marcus Aurelius Brooks, PGA",
+      "cohortId": "coach",
+      "email": "marcus.aurelius.brooks..pga@study.io",
+      "experienceLevel": "Professional Coach / Instructor",
+      "handicapOrRounds": "PGA / TPI Certified Instructor",
+      "status": "not_started",
+      "briefBio": "Customer discovery participant ready for cohort interview."
+    }
+  ],
+  "storageConfig": {
+    "storageEmail": "research-archive@golfdiscovery.org",
+    "secondaryEmail": "",
+    "autoEmailDigest": true,
+    "cloudSyncEnabled": true,
+    "studyTitle": "5-Cohort Golf Discovery Study (25 Per Cohort)",
+    "targetCountPerCohort": 25,
+    "totalTargetCount": 125
+  }
+}

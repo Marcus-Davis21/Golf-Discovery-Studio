@@ -1,6 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { CohortId, TabType, SavedSession } from './types';
-import { COHORTS_DATA, FOLLOW_UP_PROBES, DEMO_STEPS } from './data/researchData';
+import React, { useState, useEffect } from 'react';
+import {
+  CohortId,
+  TabType,
+  SavedSession,
+  Participant,
+  StorageConfig,
+  QuestionResponse,
+  RecordingMediaType,
+} from './types';
+import {
+  COHORTS_DATA,
+  FOLLOW_UP_PROBES,
+  DEMO_STEPS,
+  INITIAL_ALL_COHORTS_PARTICIPANTS,
+  DEFAULT_STORAGE_CONFIG,
+} from './data/researchData';
 import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
 import { GuidedDemoCard } from './components/GuidedDemoCard';
@@ -8,51 +22,131 @@ import { ParticipantsView } from './components/ParticipantsView';
 import { InterviewView } from './components/InterviewView';
 import { ReviewView } from './components/ReviewView';
 import { DashboardView } from './components/DashboardView';
+import { StorageView } from './components/StorageView';
 
 export default function App() {
-  // Navigation & Cohort State
+  // Navigation & Viewport State
   const [activeTab, setActiveTab] = useState<TabType>('participants');
   const [selectedCohortId, setSelectedCohortId] = useState<CohortId>('aspiring');
   const [isFullInterview, setIsFullInterview] = useState<boolean>(true);
-  const [isFramed, setIsFramed] = useState<boolean>(true);
+
+  // Laptop vs Mobile phone viewport toggle (defaults to false for wide laptop view)
+  const [isFramed, setIsFramed] = useState<boolean>(() => {
+    try {
+      return window.innerWidth < 768;
+    } catch {
+      return false;
+    }
+  });
+
+  // Storage & Email Configuration
+  const [storageConfig, setStorageConfig] = useState<StorageConfig>(() => {
+    try {
+      const saved = localStorage.getItem('gdsStorageConfig_v2');
+      return saved ? JSON.parse(saved) : DEFAULT_STORAGE_CONFIG;
+    } catch {
+      return DEFAULT_STORAGE_CONFIG;
+    }
+  });
+
+  // Participants Roster (25 per cohort = 125 default slots, unlimited additions)
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    try {
+      const saved = localStorage.getItem('gdsParticipants_v2');
+      return saved ? JSON.parse(saved) : INITIAL_ALL_COHORTS_PARTICIPANTS;
+    } catch {
+      return INITIAL_ALL_COHORTS_PARTICIPANTS;
+    }
+  });
+
+  // Active Participant being interviewed
+  const [activeParticipant, setActiveParticipant] = useState<Participant | null>(null);
 
   // Active Interview State
   const [questions, setQuestions] = useState<string[]>(COHORTS_DATA['aspiring'].questions);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentProbe, setCurrentProbe] = useState<string>(FOLLOW_UP_PROBES[0]);
   const [interviewNotes, setInterviewNotes] = useState<string>('');
+  const [responses, setResponses] = useState<Record<number, QuestionResponse>>({});
 
-  // Recording Simulation State
+  // Video & Voice Media Recording State
+  const [mediaType, setMediaType] = useState<RecordingMediaType>('video_voice');
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [recordedSeconds, setRecordedSeconds] = useState<number>(0);
-  const [recordingStatusMessage, setRecordingStatusMessage] = useState<string>(
-    'Ready to record. Tap Start recording when the participant begins.'
-  );
+  const [mediaBlobUrl, setMediaBlobUrl] = useState<string>('');
+  const [mediaSizeKb, setMediaSizeKb] = useState<number>(0);
 
-  // Sessions History & Persistence
-  const [sessionCount, setSessionCount] = useState<number>(() => {
-    try {
-      return Number(localStorage.getItem('gdsSessions') || 0);
-    } catch {
-      return 0;
-    }
-  });
-
+  // Saved Sessions Persistence
   const [savedSessions, setSavedSessions] = useState<SavedSession[]>(() => {
     try {
-      const saved = localStorage.getItem('gdsSavedSessions');
+      const saved = localStorage.getItem('gdsSavedSessions_v2');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+
   // Guided Demo Walkthrough State
   const [isDemoActive, setIsDemoActive] = useState<boolean>(false);
   const [demoStep, setDemoStep] = useState<number>(0);
   const [demoSeconds, setDemoSeconds] = useState<number>(300);
   const [isDemoFinished, setIsDemoFinished] = useState<boolean>(false);
+
+  // Sync with Backend Server on Initial Load
+  useEffect(() => {
+    async function loadFromServer() {
+      try {
+        const res = await fetch('/api/study');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.storageConfig) {
+            setStorageConfig((prev) => ({ ...prev, ...data.storageConfig }));
+          }
+          if (Array.isArray(data.participants) && data.participants.length >= 100) {
+            setParticipants(data.participants);
+            localStorage.setItem('gdsParticipants_v2', JSON.stringify(data.participants));
+          } else {
+            // Seed master 125 participants (25 per cohort) to backend
+            await fetch('/api/participants', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(INITIAL_ALL_COHORTS_PARTICIPANTS),
+            });
+            setParticipants(INITIAL_ALL_COHORTS_PARTICIPANTS);
+            localStorage.setItem('gdsParticipants_v2', JSON.stringify(INITIAL_ALL_COHORTS_PARTICIPANTS));
+          }
+          if (Array.isArray(data.sessions) && data.sessions.length > 0) {
+            setSavedSessions(data.sessions);
+            localStorage.setItem('gdsSavedSessions_v2', JSON.stringify(data.sessions));
+          }
+        }
+      } catch (e) {
+        console.warn('Backend sync unavailable, using local client storage:', e);
+      }
+    }
+    loadFromServer();
+  }, []);
+
+  // Sync Helper
+  const handleSyncNow = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('/api/study');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.storageConfig) setStorageConfig((prev) => ({ ...prev, ...data.storageConfig }));
+        if (Array.isArray(data.participants)) setParticipants(data.participants);
+        if (Array.isArray(data.sessions)) setSavedSessions(data.sessions);
+      }
+    } catch (err) {
+      console.warn('Manual sync error:', err);
+    } finally {
+      setTimeout(() => setIsSyncing(false), 500);
+    }
+  };
 
   // Recording Timer
   useEffect(() => {
@@ -95,30 +189,57 @@ export default function App() {
     setCurrentProbe(FOLLOW_UP_PROBES[0]);
   };
 
-  // Start Interview
-  const handleStartInterview = (isFull: boolean) => {
+  // Start Interview with specific participant
+  const handleStartInterview = (isFull: boolean, participant?: Participant) => {
     setIsRecording(false);
     setIsPaused(false);
     setRecordedSeconds(0);
-    setRecordingStatusMessage('Ready to record. Tap Start recording when the participant begins.');
+    setMediaBlobUrl('');
+    setMediaSizeKb(0);
+
+    const targetCohort = participant ? participant.cohortId : selectedCohortId;
+    setSelectedCohortId(targetCohort);
+    setActiveParticipant(participant || null);
 
     setIsFullInterview(isFull);
-    const cohortData = COHORTS_DATA[selectedCohortId];
+    const cohortData = COHORTS_DATA[targetCohort];
     const qs = isFull ? cohortData.questions : cohortData.questions.slice(0, Math.min(8, cohortData.questions.length));
     setQuestions(qs);
     setCurrentIndex(0);
     setCurrentProbe(FOLLOW_UP_PROBES[0]);
+    setInterviewNotes('');
+    setResponses({});
     setActiveTab('interview');
   };
 
-  // Next Question
-  const handleNextQuestion = () => {
-    if (isRecording) {
-      setIsRecording(false);
-      setIsPaused(false);
-      setRecordingStatusMessage('Question advanced. Recording paused automatically.');
-    }
+  // Save specific question response
+  const handleSaveQuestionResponse = (index: number, responseUpdates: Partial<QuestionResponse>) => {
+    setResponses((prev) => {
+      const existing = prev[index] || {
+        questionIndex: index,
+        questionText: questions[index] || '',
+        answer: '',
+      };
+      return {
+        ...prev,
+        [index]: {
+          ...existing,
+          ...responseUpdates,
+        },
+      };
+    });
+  };
 
+  // Jump to Question
+  const handleJumpToQuestion = (idx: number) => {
+    if (idx >= 0 && idx < questions.length) {
+      setCurrentIndex(idx);
+      setCurrentProbe(FOLLOW_UP_PROBES[idx % FOLLOW_UP_PROBES.length]);
+    }
+  };
+
+  // Next / Prev Question
+  const handleNextQuestion = () => {
     if (currentIndex < questions.length - 1) {
       const nextIdx = currentIndex + 1;
       setCurrentIndex(nextIdx);
@@ -136,74 +257,207 @@ export default function App() {
     }
   };
 
-  // Recording Toggles
-  const handleToggleRecord = () => {
-    if (!isRecording) {
-      setIsRecording(true);
-      setIsPaused(false);
-      setRecordingStatusMessage('Recording simulation started. Speak naturally, then use Pause if needed.');
-    } else {
-      setIsRecording(false);
-      setIsPaused(false);
-      setRecordingStatusMessage('Recording simulation stopped. You can continue the interview or review notes.');
-    }
+  // Media Recording Action Triggers
+  const handleStartRecording = () => {
+    setIsRecording(true);
+    setIsPaused(false);
   };
 
-  const handleTogglePause = () => {
-    if (!isRecording) return;
-    setIsPaused((prev) => {
-      const next = !prev;
-      setRecordingStatusMessage(next ? 'Recording paused. Tap Resume to continue.' : 'Recording resumed.');
-      return next;
-    });
+  const handlePauseRecording = () => {
+    setIsPaused(true);
   };
 
-  // Submit Session
-  const handleSubmitSession = () => {
-    const newCount = sessionCount + 1;
-    setSessionCount(newCount);
-    try {
-      localStorage.setItem('gdsSessions', String(newCount));
-    } catch (e) {
-      console.warn('Storage error', e);
-    }
+  const handleResumeRecording = () => {
+    setIsPaused(false);
+  };
+
+  const handleStopRecording = () => {
+    setIsRecording(false);
+    setIsPaused(false);
+  };
+
+  const handleMediaRecorded = (blobUrl: string, sizeKb: number) => {
+    setMediaBlobUrl(blobUrl);
+    setMediaSizeKb(sizeKb);
+  };
+
+  // Submit Session with optional Email Dispatch
+  const handleSubmitSession = async (dispatchEmail: boolean = false) => {
+    const sessionId = 'session-' + Date.now();
+    const answeredCount = Object.values(responses).filter((r) => r.answer?.trim()).length || currentIndex + 1;
 
     const newSession: SavedSession = {
-      id: 'session-' + Date.now(),
+      id: sessionId,
+      participantId: activeParticipant?.id,
+      participantName: activeParticipant?.name || 'Ad-Hoc Participant',
+      participantEmail: activeParticipant?.email,
       cohortId: selectedCohortId,
       cohortName: COHORTS_DATA[selectedCohortId].name,
       mode: isFullInterview ? 'full' : 'quick',
       modeName: isFullInterview ? 'Full Interview' : 'Quick Interview',
-      questionsAnswered: currentIndex + 1,
+      questionsAnswered: answeredCount,
       totalQuestions: questions.length,
       recordedSeconds,
+      mediaType,
+      mediaBlobUrl,
+      mediaSizeKb,
       notes: interviewNotes,
+      responses,
       timestamp: Date.now(),
+      syncedToStorageEmail: storageConfig.storageEmail,
     };
 
-    const updatedSessions = [newSession, ...savedSessions];
+    // Update sessions state & local storage
+    const updatedSessions = [newSession, ...savedSessions.filter((s) => s.id !== sessionId)];
     setSavedSessions(updatedSessions);
     try {
-      localStorage.setItem('gdsSavedSessions', JSON.stringify(updatedSessions));
+      localStorage.setItem('gdsSavedSessions_v2', JSON.stringify(updatedSessions));
     } catch (e) {
       console.warn('Storage error', e);
     }
 
+    // Update participant status in cohort roster
+    if (activeParticipant) {
+      const updatedParticipants = participants.map((p) =>
+        p.id === activeParticipant.id ? { ...p, status: 'completed' as const, sessionId } : p
+      );
+      setParticipants(updatedParticipants);
+      try {
+        localStorage.setItem('gdsParticipants_v2', JSON.stringify(updatedParticipants));
+      } catch (e) {
+        console.warn('Storage error', e);
+      }
+
+      // Persist to server
+      try {
+        await fetch('/api/participants', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedParticipants),
+        });
+      } catch (err) {
+        console.warn('Backend update failed:', err);
+      }
+    }
+
+    // Persist session to backend server
+    try {
+      await fetch('/api/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSession),
+      });
+    } catch (err) {
+      console.warn('Backend session write error:', err);
+    }
+
     setIsRecording(false);
     setIsPaused(false);
-    setRecordingStatusMessage("Session saved to this browser's prototype state. No audio/video is stored.");
+
+    // If direct email dispatch requested
+    if (dispatchEmail && storageConfig.storageEmail) {
+      const subject = encodeURIComponent(
+        `[Golf Discovery Interview] ${newSession.participantName} (${newSession.cohortName})`
+      );
+      let bodyText = `Participant: ${newSession.participantName} (${newSession.participantId || 'N/A'})\n`;
+      bodyText += `Cohort: ${newSession.cohortName} - ${newSession.modeName}\n`;
+      bodyText += `Media: ${newSession.mediaType} (${Math.floor(newSession.recordedSeconds / 60)}m ${newSession.recordedSeconds % 60}s)\n`;
+      bodyText += `Questions Answered: ${newSession.questionsAnswered}/${newSession.totalQuestions}\n\n`;
+      if (newSession.notes) {
+        bodyText += `OBSERVATIONS:\n${newSession.notes}\n\n`;
+      }
+      bodyText += `QUESTION RESPONSES:\n`;
+      Object.values(responses).forEach((r) => {
+        if (r.answer?.trim()) {
+          bodyText += `- Q${r.questionIndex + 1}: ${r.questionText}\n  Answer: "${r.answer}"\n`;
+          if (r.quote) bodyText += `  Quote: "${r.quote}"\n`;
+        }
+      });
+      bodyText += `\n[Stored in 5-Cohort Golf Discovery Study Database]`;
+
+      window.location.href = `mailto:${encodeURIComponent(storageConfig.storageEmail)}?subject=${subject}&body=${encodeURIComponent(
+        bodyText.slice(0, 1800)
+      )}`;
+    }
+
     setActiveTab('dashboard');
   };
 
-  const handleClearSessions = () => {
-    if (window.confirm('Reset all saved discovery session records for this prototype?')) {
-      setSessionCount(0);
+  // Update Storage Config
+  const handleUpdateStorageConfig = async (newConfig: StorageConfig) => {
+    setStorageConfig(newConfig);
+    try {
+      localStorage.setItem('gdsStorageConfig_v2', JSON.stringify(newConfig));
+      await fetch('/api/storage/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newConfig),
+      });
+    } catch (e) {
+      console.warn('Storage update error', e);
+    }
+  };
+
+  // Update Participant
+  const handleUpdateParticipant = async (updated: Participant) => {
+    const nextList = participants.map((p) => (p.id === updated.id ? updated : p));
+    setParticipants(nextList);
+    try {
+      localStorage.setItem('gdsParticipants_v2', JSON.stringify(nextList));
+      await fetch('/api/participants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nextList),
+      });
+    } catch (e) {
+      console.warn('Error saving participant', e);
+    }
+  };
+
+  // Add Participant
+  const handleAddParticipant = async (newP: Participant) => {
+    const nextList = [...participants, newP];
+    setParticipants(nextList);
+    try {
+      localStorage.setItem('gdsParticipants_v2', JSON.stringify(nextList));
+      await fetch('/api/participants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nextList),
+      });
+    } catch (e) {
+      console.warn('Error adding participant', e);
+    }
+  };
+
+  // Delete Individual Session
+  const handleDeleteSession = async (id: string) => {
+    const updated = savedSessions.filter((s) => s.id !== id);
+    setSavedSessions(updated);
+    try {
+      localStorage.setItem('gdsSavedSessions_v2', JSON.stringify(updated));
+      await fetch(`/api/sessions/${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('Error deleting session', e);
+    }
+  };
+
+  // Clear all sessions
+  const handleClearSessions = async () => {
+    if (window.confirm('Reset all saved discovery session records across all cohorts?')) {
       setSavedSessions([]);
+      const resetParticipants = participants.map((p) => ({
+        ...p,
+        status: 'not_started' as const,
+        sessionId: undefined,
+      }));
+      setParticipants(resetParticipants);
       try {
-        localStorage.removeItem('gdsSessions');
-        localStorage.removeItem('gdsSavedSessions');
+        localStorage.removeItem('gdsSavedSessions_v2');
+        localStorage.setItem('gdsParticipants_v2', JSON.stringify(resetParticipants));
+        await fetch('/api/sessions/clear', { method: 'POST' });
       } catch (e) {
-        console.warn('Storage error', e);
+        console.warn('Storage clear error', e);
       }
     }
   };
@@ -241,28 +495,40 @@ export default function App() {
     setIsDemoFinished(false);
   };
 
+  const activeCohortCompletedCount = savedSessions.filter((s) => s.cohortId === selectedCohortId).length;
+
   return (
     <div className="min-h-screen bg-slate-100/90 text-slate-800 flex justify-center selection:bg-emerald-100 selection:text-emerald-900 font-sans antialiased">
-      {/* Mobile App View Frame */}
+      {/* Responsive Viewport Container: Adapts between Laptop wide layout and Mobile phone frame */}
       <div
         className={`w-full bg-white min-h-screen shadow-xl border-x border-slate-200/80 flex flex-col transition-all duration-300 ${
-          isFramed ? 'max-w-[430px]' : 'max-w-3xl'
+          isFramed ? 'max-w-[440px]' : 'max-w-6xl'
         }`}
       >
         {/* Header */}
-        <Header isFramed={isFramed} onToggleFrame={() => setIsFramed(!isFramed)} />
+        <Header
+          isFramed={isFramed}
+          onToggleFrame={() => setIsFramed(!isFramed)}
+          storageEmail={storageConfig.storageEmail}
+          onNavigateToStorage={() => setActiveTab('storage')}
+          sessionCount={savedSessions.length}
+          totalTargetCount={storageConfig.totalTargetCount || 125}
+          activeCohortName={COHORTS_DATA[selectedCohortId].name}
+        />
 
-        {/* Sticky Tabs Navigation */}
+        {/* Navigation Tabs */}
         <NavigationTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}
           isRecording={isRecording}
-          sessionCount={sessionCount}
+          cohortCompletedCount={activeCohortCompletedCount}
+          cohortTargetCount={storageConfig.targetCountPerCohort || 25}
+          totalCompletedCount={savedSessions.length}
         />
 
         {/* Main Content Area */}
-        <main className="p-4 pb-24 flex-1">
-          {/* Guided Demo Walkthrough Box */}
+        <main className="p-3.5 sm:p-5 pb-24 flex-1">
+          {/* Guided Demo Walkthrough Card */}
           <GuidedDemoCard
             isDemoActive={isDemoActive}
             demoStep={demoStep}
@@ -274,15 +540,19 @@ export default function App() {
             onStopDemo={handleStopDemo}
           />
 
-          {/* Tab Views */}
+          {/* Tab 1: Cohort Roster (25 Target / Cohort + Unlimited) */}
           {activeTab === 'participants' && (
             <ParticipantsView
               selectedCohortId={selectedCohortId}
               onCohortChange={handleCohortChange}
               onStartInterview={handleStartInterview}
+              participants={participants}
+              onUpdateParticipant={handleUpdateParticipant}
+              onAddParticipant={handleAddParticipant}
             />
           )}
 
+          {/* Tab 2: Live Video & Voice Interview View */}
           {activeTab === 'interview' && (
             <InterviewView
               cohortName={COHORTS_DATA[selectedCohortId].name}
@@ -294,17 +564,27 @@ export default function App() {
               onNextQuestion={handleNextQuestion}
               onPrevQuestion={handlePrevQuestion}
               onGoToReview={() => setActiveTab('review')}
+              onJumpToQuestion={handleJumpToQuestion}
+              activeParticipant={activeParticipant}
+              mediaType={mediaType}
+              onMediaTypeChange={setMediaType}
               isRecording={isRecording}
               isPaused={isPaused}
               recordedSeconds={recordedSeconds}
-              recordingStatusMessage={recordingStatusMessage}
-              onToggleRecord={handleToggleRecord}
-              onTogglePause={handleTogglePause}
+              onStartRecording={handleStartRecording}
+              onPauseRecording={handlePauseRecording}
+              onResumeRecording={handleResumeRecording}
+              onStopRecording={handleStopRecording}
+              mediaBlobUrl={mediaBlobUrl}
+              onMediaRecorded={handleMediaRecorded}
+              responses={responses}
+              onSaveQuestionResponse={handleSaveQuestionResponse}
               notes={interviewNotes}
               onNotesChange={setInterviewNotes}
             />
           )}
 
+          {/* Tab 3: Review & Verification */}
           {activeTab === 'review' && (
             <ReviewView
               cohortName={COHORTS_DATA[selectedCohortId].name}
@@ -314,25 +594,52 @@ export default function App() {
               recordedSeconds={recordedSeconds}
               isRecording={isRecording}
               isPaused={isPaused}
+              mediaType={mediaType}
+              mediaBlobUrl={mediaBlobUrl}
+              mediaSizeKb={mediaSizeKb}
               notes={interviewNotes}
+              responses={responses}
+              activeParticipant={activeParticipant}
+              storageEmail={storageConfig.storageEmail}
               onSaveSession={handleSubmitSession}
               onReturnToInterview={() => setActiveTab('interview')}
             />
           )}
 
+          {/* Tab 4: All Cohorts Dashboard (Target: 25 / Cohort) */}
           {activeTab === 'dashboard' && (
             <DashboardView
-              sessionCount={sessionCount}
+              sessionCount={savedSessions.length}
               activeCohortName={COHORTS_DATA[selectedCohortId].name}
               savedSessions={savedSessions}
+              participants={participants}
+              storageEmail={storageConfig.storageEmail}
+              targetCountPerCohort={storageConfig.targetCountPerCohort || 25}
               onClearSessions={handleClearSessions}
+              onDeleteSession={handleDeleteSession}
+              onNavigateToStorage={() => setActiveTab('storage')}
+            />
+          )}
+
+          {/* Tab 5: Storage & Email Archive */}
+          {activeTab === 'storage' && (
+            <StorageView
+              storageConfig={storageConfig}
+              onUpdateStorageConfig={handleUpdateStorageConfig}
+              savedSessions={savedSessions}
+              participants={participants}
+              onSyncNow={handleSyncNow}
+              isSyncing={isSyncing}
             />
           )}
         </main>
 
         {/* Fixed Footer */}
-        <footer className="sticky bottom-0 z-20 w-full px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-slate-200 text-[11px] text-center text-slate-500 font-medium">
-          Mobile stakeholder-testing prototype · Iteration 2
+        <footer className="sticky bottom-0 z-20 w-full px-4 py-2 bg-white/95 backdrop-blur-sm border-t border-slate-200 text-[11px] text-center text-slate-500 font-medium flex items-center justify-between">
+          <span>Laptop & Mobile Video/Voice Discovery · 25 Quota / Cohort</span>
+          <span className="font-mono text-emerald-800 font-semibold truncate max-w-[200px]">
+            Target: {storageConfig.storageEmail}
+          </span>
         </footer>
       </div>
     </div>
