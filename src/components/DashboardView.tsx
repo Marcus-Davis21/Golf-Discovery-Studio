@@ -131,22 +131,46 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       'Total Questions',
       'Media Duration (Sec)',
       'Date Completed',
+      'AI Analyzed',
+      'Sentiment (Enthusiastic %)',
+      'Sentiment (Frustrated %)',
+      'Sentiment (Hesitant %)',
+      'Direct Soundbites',
+      'Identified Barriers',
+      'Current Tools & Improvised Drills',
+      'Verbatim Transcript Turns',
       'Notes & Observations',
     ];
 
-    const rows = savedSessions.map((s) => [
-      `"${s.id}"`,
-      `"${s.participantId || ''}"`,
-      `"${(s.participantName || '').replace(/"/g, '""')}"`,
-      `"${s.cohortName}"`,
-      `"${s.modeName}"`,
-      `"${s.mediaType || 'audio'}"`,
-      s.questionsAnswered,
-      s.totalQuestions,
-      s.recordedSeconds,
-      `"${new Date(s.timestamp).toISOString()}"`,
-      `"${(s.notes || '').replace(/"/g, '""')}"`,
-    ]);
+    const rows = savedSessions.map((s) => {
+      const hasAi = !!s.aiAnalysis;
+      const soundbitesStr = s.aiAnalysis?.quotableSoundbites?.map((q) => `"${q.quote.replace(/"/g, '""')}" (${q.significance || q.context})`).join('; ') || '';
+      const barriersStr = s.aiAnalysis?.identifiedBarriers?.map((b) => `[${b.severity.toUpperCase()}] ${b.barrier}: ${b.participantVerbatim}`).join('; ') || '';
+      const drillsStr = s.aiAnalysis?.currentToolsAndDrills?.map((d) => `${d.toolOrDrill} (${d.source}): ${d.outcome}${d.abandonedReason ? ` [Abandoned: ${d.abandonedReason}]` : ''}`).join('; ') || '';
+      const transcriptStr = s.aiAnalysis?.verbatimTranscript?.map((t) => `[${t.timestamp}] ${t.speaker}: ${t.text}`).join(' | ') || '';
+
+      return [
+        `"${s.id}"`,
+        `"${s.participantId || ''}"`,
+        `"${(s.participantName || '').replace(/"/g, '""')}"`,
+        `"${s.cohortName}"`,
+        `"${s.modeName}"`,
+        `"${s.mediaType || 'audio'}"`,
+        s.questionsAnswered,
+        s.totalQuestions,
+        s.recordedSeconds,
+        `"${new Date(s.timestamp).toISOString()}"`,
+        hasAi ? '"Yes"' : '"No"',
+        hasAi ? s.aiAnalysis?.sentimentAnalysis?.breakdown?.enthusiasticScore || 0 : '""',
+        hasAi ? s.aiAnalysis?.sentimentAnalysis?.breakdown?.frustratedScore || 0 : '""',
+        hasAi ? s.aiAnalysis?.sentimentAnalysis?.breakdown?.hesitantScore || 0 : '""',
+        `"${soundbitesStr.replace(/"/g, '""')}"`,
+        `"${barriersStr.replace(/"/g, '""')}"`,
+        `"${drillsStr.replace(/"/g, '""')}"`,
+        `"${transcriptStr.replace(/"/g, '""')}"`,
+        `"${(s.notes || '').replace(/"/g, '""')}"`,
+      ];
+    });
 
     const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

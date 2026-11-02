@@ -210,7 +210,8 @@ app.post('/api/ai/transcribe-analyze', async (req, res) => {
   } = req.body || {};
 
   try {
-    const hasApiKey = Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 5);
+    const rawKey = process.env.GEMINI_API_KEY?.trim() || '';
+    const hasApiKey = rawKey.length > 10 && !rawKey.includes('MY_GEMINI_API_KEY') && !rawKey.startsWith('placeholder');
 
     if (hasApiKey) {
       // Build multimodal parts
@@ -248,7 +249,8 @@ Return strictly valid JSON adhering to the specified schema.`;
 
       parts.push({ text: promptText });
 
-      const geminiResponse = await ai.models.generateContent({
+      // Call Gemini API with timeout protection
+      const geminiCall = ai.models.generateContent({
         model: 'gemini-3.8-flash',
         contents: { parts },
         config: {
@@ -339,6 +341,11 @@ Return strictly valid JSON adhering to the specified schema.`;
           },
         },
       });
+
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini API call timed out after 10s')), 10000)
+      );
+      const geminiResponse = await Promise.race([geminiCall, timeoutPromise]);
 
       const parsed = JSON.parse(geminiResponse.text || '{}');
       return res.json({
