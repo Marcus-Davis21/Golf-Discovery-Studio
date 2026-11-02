@@ -1,4 +1,4 @@
-import { CohortId, CohortInfo, DemoStep, Participant, StorageConfig } from '../types';
+import { CohortId, CohortInfo, Participant, StorageConfig } from '../types';
 
 export const DEFAULT_STORAGE_CONFIG: StorageConfig = {
   storageEmail: 'research-archive@golfdiscovery.org',
@@ -404,32 +404,4 @@ export const INITIAL_ALL_COHORTS_PARTICIPANTS: Participant[] = [
   ...generateCohortParticipants('amateur'),
   ...generateCohortParticipants('mid'),
   ...generateCohortParticipants('coach'),
-];
-
-export const DEMO_STEPS: DemoStep[] = [
-  {
-    tab: 'participants',
-    title: '1. Select Cohort & 25-Interview Roster',
-    prompt: 'Browse your active cohort. Notice each cohort has its own target of 25 interviews (125 total), with unlimited interviews supported.',
-  },
-  {
-    tab: 'interview',
-    title: '2. Video & Voice Interview Mode',
-    prompt: 'Conduct the interview using real or simulated camera video and microphone voice recording. Works seamlessly on both laptop and mobile.',
-  },
-  {
-    tab: 'review',
-    title: '3. Verify & Auto-Save Session',
-    prompt: 'Review completed question answers, quotes, video/audio status, then commit to high-capacity storage with instant backup.',
-  },
-  {
-    tab: 'dashboard',
-    title: '4. Track Quota per Specific Cohort',
-    prompt: 'Inspect progress towards 25 for each specific cohort, watch recorded sessions, and export cohort data as CSV or JSON.',
-  },
-  {
-    tab: 'storage',
-    title: '5. Storage & Email Archive',
-    prompt: 'Set your designated storage email address and dispatch full cohort interview packages with a single tap.',
-  },
 ];

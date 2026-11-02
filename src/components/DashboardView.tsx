@@ -24,6 +24,11 @@ import {
   Mic,
   Play,
   Layers,
+  Sparkles,
+  Brain,
+  ShieldAlert,
+  Wrench,
+  ChevronRight,
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -396,6 +401,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             <Mic className="w-2.5 h-2.5" /> Voice
                           </span>
                         )}
+                        {session.aiAnalysis && (
+                          <span className="text-[9px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-1.5 py-0.2 rounded flex items-center gap-1">
+                            <Sparkles className="w-2.5 h-2.5 text-emerald-700" />
+                            <span>AI Analyzed ({session.aiAnalysis.sentimentAnalysis.overall})</span>
+                          </span>
+                        )}
                       </div>
 
                       <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
@@ -450,6 +461,155 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             <video src={session.mediaBlobUrl} controls className="w-full rounded max-h-48 bg-black object-contain" />
                           ) : (
                             <audio src={session.mediaBlobUrl} controls className="w-full" />
+                          )}
+                        </div>
+                      )}
+
+                      {/* Computer Scientist Cloud AI Qualitative Extraction Block */}
+                      {session.aiAnalysis && (
+                        <div className="p-3 bg-gradient-to-br from-emerald-50/70 to-slate-50 border border-emerald-200 rounded-xl space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-[11px] text-emerald-950 flex items-center gap-1.5">
+                              <Brain className="w-3.5 h-3.5 text-emerald-700" />
+                              Computer Scientist Cloud AI Intelligence ({session.aiAnalysis.modelUsed || 'gemini-3.8-flash'})
+                            </span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                              Sentiment: {session.aiAnalysis.sentimentAnalysis.overall}
+                            </span>
+                          </div>
+
+                          {/* Sentiment Breakdown Bars */}
+                          <div className="grid grid-cols-3 gap-2 bg-white p-2 rounded-lg border border-slate-200 text-[10px]">
+                            <div>
+                              <div className="flex justify-between text-emerald-800 font-semibold mb-0.5">
+                                <span>Enthusiastic</span>
+                                <span>{session.aiAnalysis.sentimentAnalysis.breakdown.enthusiasticScore}%</span>
+                              </div>
+                              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                <div
+                                  className="bg-emerald-600 h-full rounded-full"
+                                  style={{ width: `${session.aiAnalysis.sentimentAnalysis.breakdown.enthusiasticScore}%` }}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-rose-800 font-semibold mb-0.5">
+                                <span>Frustrated</span>
+                                <span>{session.aiAnalysis.sentimentAnalysis.breakdown.frustratedScore}%</span>
+                              </div>
+                              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                <div
+                                  className="bg-rose-500 h-full rounded-full"
+                                  style={{ width: `${session.aiAnalysis.sentimentAnalysis.breakdown.frustratedScore}%` }}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex justify-between text-amber-800 font-semibold mb-0.5">
+                                <span>Hesitant</span>
+                                <span>{session.aiAnalysis.sentimentAnalysis.breakdown.hesitantScore}%</span>
+                              </div>
+                              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                <div
+                                  className="bg-amber-500 h-full rounded-full"
+                                  style={{ width: `${session.aiAnalysis.sentimentAnalysis.breakdown.hesitantScore}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Direct Quotable Soundbites */}
+                          {session.aiAnalysis.quotableSoundbites.length > 0 && (
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <Quote className="w-3 h-3 text-emerald-700" />
+                                Direct Quotable Soundbites ({session.aiAnalysis.quotableSoundbites.length})
+                              </div>
+                              <div className="space-y-1.5">
+                                {session.aiAnalysis.quotableSoundbites.map((qb, i) => (
+                                  <div key={i} className="bg-white p-2 rounded-lg border border-slate-200 text-[11px]">
+                                    <div className="italic font-medium text-slate-900">"{qb.quote}"</div>
+                                    <div className="text-[10px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
+                                      <span className="font-semibold text-emerald-800">Significance:</span>
+                                      <span>{qb.significance}</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Identified Barriers */}
+                          {session.aiAnalysis.identifiedBarriers.length > 0 && (
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <ShieldAlert className="w-3 h-3 text-rose-600" />
+                                Identified Barriers & Friction Points
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                {session.aiAnalysis.identifiedBarriers.map((bar, i) => (
+                                  <div key={i} className="bg-white p-2 rounded-lg border border-slate-200 text-[10px]">
+                                    <div className="flex items-center justify-between mb-0.5">
+                                      <span className="font-bold text-slate-800">{bar.barrier}</span>
+                                      <span className="font-mono text-[9px] px-1 py-0.2 rounded bg-rose-50 text-rose-800 uppercase font-bold">
+                                        {bar.severity} · {bar.category}
+                                      </span>
+                                    </div>
+                                    <p className="text-slate-600 italic">"{bar.participantVerbatim}"</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Current Tools & Improvised Drills */}
+                          {session.aiAnalysis.currentToolsAndDrills.length > 0 && (
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <Wrench className="w-3 h-3 text-amber-700" />
+                                Current Tools & Improvised Drills
+                              </div>
+                              <div className="space-y-1">
+                                {session.aiAnalysis.currentToolsAndDrills.map((td, i) => (
+                                  <div key={i} className="bg-white p-2 rounded-lg border border-slate-200 text-[10px] flex items-start justify-between gap-2">
+                                    <div>
+                                      <span className="font-bold text-slate-800">{td.toolOrDrill}</span>
+                                      <span className="text-slate-500 text-[9px] ml-1.5 font-mono">({td.source})</span>
+                                      <div className="text-slate-600 mt-0.5">Outcome: {td.outcome}</div>
+                                      {td.abandonedReason && (
+                                        <div className="text-rose-700 text-[9px] mt-0.5">Abandoned: {td.abandonedReason}</div>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Verbatim Transcript */}
+                          {session.aiAnalysis.verbatimTranscript.length > 0 && (
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <FileText className="w-3 h-3 text-slate-600" />
+                                Anchored Verbatim Transcript ({session.aiAnalysis.verbatimTranscript.length} Turns)
+                              </div>
+                              <div className="bg-white p-2 rounded-lg border border-slate-200 max-h-36 overflow-y-auto space-y-1.5 text-[10px]">
+                                {session.aiAnalysis.verbatimTranscript.map((t, i) => (
+                                  <div key={i} className="flex gap-2">
+                                    <span className="font-mono text-slate-400 font-bold shrink-0">{t.timestamp}</span>
+                                    <div className="flex-1">
+                                      <span className={`font-bold ${t.speaker === 'Interviewer' ? 'text-emerald-800' : 'text-slate-900'}`}>
+                                        {t.speaker}:
+                                      </span>{' '}
+                                      <span className="text-slate-700">{t.text}</span>
+                                      {t.questionAnchor && (
+                                        <span className="text-[9px] text-slate-400 ml-1 font-mono">[{t.questionAnchor}]</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </div>
                       )}

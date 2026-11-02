@@ -11,18 +11,17 @@ import {
 import {
   COHORTS_DATA,
   FOLLOW_UP_PROBES,
-  DEMO_STEPS,
   INITIAL_ALL_COHORTS_PARTICIPANTS,
   DEFAULT_STORAGE_CONFIG,
 } from './data/researchData';
 import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
-import { GuidedDemoCard } from './components/GuidedDemoCard';
 import { ParticipantsView } from './components/ParticipantsView';
 import { InterviewView } from './components/InterviewView';
 import { ReviewView } from './components/ReviewView';
 import { DashboardView } from './components/DashboardView';
 import { StorageView } from './components/StorageView';
+import { ORDView } from './components/ORDView';
 
 export default function App() {
   // Navigation & Viewport State
@@ -30,7 +29,7 @@ export default function App() {
   const [selectedCohortId, setSelectedCohortId] = useState<CohortId>('aspiring');
   const [isFullInterview, setIsFullInterview] = useState<boolean>(true);
 
-  // Laptop vs Mobile phone viewport toggle (defaults to false for wide laptop view)
+  // Laptop vs Mobile phone viewport toggle
   const [isFramed, setIsFramed] = useState<boolean>(() => {
     try {
       return window.innerWidth < 768;
@@ -69,6 +68,10 @@ export default function App() {
   const [interviewNotes, setInterviewNotes] = useState<string>('');
   const [responses, setResponses] = useState<Record<number, QuestionResponse>>({});
 
+  // Computer Scientist Cloud AI Pipeline State
+  const [aiAnalysis, setAiAnalysis] = useState<any | undefined>(undefined);
+  const [isLoadingAIAnalysis, setIsLoadingAIAnalysis] = useState<boolean>(false);
+
   // Video & Voice Media Recording State
   const [mediaType, setMediaType] = useState<RecordingMediaType>('video_voice');
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -89,12 +92,6 @@ export default function App() {
 
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
-  // Guided Demo Walkthrough State
-  const [isDemoActive, setIsDemoActive] = useState<boolean>(false);
-  const [demoStep, setDemoStep] = useState<number>(0);
-  const [demoSeconds, setDemoSeconds] = useState<number>(300);
-  const [isDemoFinished, setIsDemoFinished] = useState<boolean>(false);
-
   // Sync with Backend Server on Initial Load
   useEffect(() => {
     async function loadFromServer() {
@@ -109,7 +106,6 @@ export default function App() {
             setParticipants(data.participants);
             localStorage.setItem('gdsParticipants_v2', JSON.stringify(data.participants));
           } else {
-            // Seed master 125 participants (25 per cohort) to backend
             await fetch('/api/participants', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -161,25 +157,6 @@ export default function App() {
     };
   }, [isRecording, isPaused]);
 
-  // Demo Timer
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isDemoActive && !isDemoFinished) {
-      interval = setInterval(() => {
-        setDemoSeconds((prev) => {
-          if (prev <= 1) {
-            setIsDemoFinished(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isDemoActive, isDemoFinished]);
-
   // Cohort Change
   const handleCohortChange = (id: CohortId) => {
     setSelectedCohortId(id);
@@ -187,6 +164,7 @@ export default function App() {
     setQuestions(cohortData.questions);
     setCurrentIndex(0);
     setCurrentProbe(FOLLOW_UP_PROBES[0]);
+    setAiAnalysis(undefined);
   };
 
   // Start Interview with specific participant
@@ -196,6 +174,8 @@ export default function App() {
     setRecordedSeconds(0);
     setMediaBlobUrl('');
     setMediaSizeKb(0);
+    setAiAnalysis(undefined);
+    setIsLoadingAIAnalysis(false);
 
     const targetCohort = participant ? participant.cohortId : selectedCohortId;
     setSelectedCohortId(targetCohort);
@@ -281,6 +261,61 @@ export default function App() {
     setMediaSizeKb(sizeKb);
   };
 
+  // Computer Scientist Cloud AI Qualitative Extraction Pipeline
+  const handleRunAIAnalysis = async () => {
+    setIsLoadingAIAnalysis(true);
+    try {
+      let audioBase64: string | undefined = undefined;
+      let mimeType = mediaType === 'video_voice' ? 'video/webm' : 'audio/webm';
+
+      if (mediaBlobUrl) {
+        try {
+          const blobRes = await fetch(mediaBlobUrl);
+          const blob = await blobRes.blob();
+          mimeType = blob.type || mimeType;
+
+          // Convert blob to base64
+          const reader = new FileReader();
+          audioBase64 = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => {
+              const res = reader.result as string;
+              resolve(res);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        } catch (blobErr) {
+          console.warn('Could not read media blob, proceeding with metadata analysis:', blobErr);
+        }
+      }
+
+      const res = await fetch('/api/ai/transcribe-analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioBase64,
+          mimeType,
+          cohortName: COHORTS_DATA[selectedCohortId].name,
+          participantName: activeParticipant?.name || 'Ad-Hoc Participant',
+          questions,
+          notes: interviewNotes,
+          responses,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setAiAnalysis(json.data);
+        }
+      }
+    } catch (err) {
+      console.error('Error invoking Computer Scientist AI analysis pipeline:', err);
+    } finally {
+      setIsLoadingAIAnalysis(false);
+    }
+  };
+
   // Submit Session with optional Email Dispatch
   const handleSubmitSession = async (dispatchEmail: boolean = false) => {
     const sessionId = 'session-' + Date.now();
@@ -303,11 +338,11 @@ export default function App() {
       mediaSizeKb,
       notes: interviewNotes,
       responses,
+      aiAnalysis,
       timestamp: Date.now(),
       syncedToStorageEmail: storageConfig.storageEmail,
     };
 
-    // Update sessions state & local storage
     const updatedSessions = [newSession, ...savedSessions.filter((s) => s.id !== sessionId)];
     setSavedSessions(updatedSessions);
     try {
@@ -316,7 +351,6 @@ export default function App() {
       console.warn('Storage error', e);
     }
 
-    // Update participant status in cohort roster
     if (activeParticipant) {
       const updatedParticipants = participants.map((p) =>
         p.id === activeParticipant.id ? { ...p, status: 'completed' as const, sessionId } : p
@@ -328,7 +362,6 @@ export default function App() {
         console.warn('Storage error', e);
       }
 
-      // Persist to server
       try {
         await fetch('/api/participants', {
           method: 'POST',
@@ -340,7 +373,6 @@ export default function App() {
       }
     }
 
-    // Persist session to backend server
     try {
       await fetch('/api/sessions', {
         method: 'POST',
@@ -354,7 +386,6 @@ export default function App() {
     setIsRecording(false);
     setIsPaused(false);
 
-    // If direct email dispatch requested
     if (dispatchEmail && storageConfig.storageEmail) {
       const subject = encodeURIComponent(
         `[Golf Discovery Interview] ${newSession.participantName} (${newSession.cohortName})`
@@ -462,39 +493,6 @@ export default function App() {
     }
   };
 
-  // Guided Demo Walkthrough Actions
-  const handleStartDemo = () => {
-    setIsDemoActive(true);
-    setDemoStep(0);
-    setDemoSeconds(300);
-    setIsDemoFinished(false);
-    setActiveTab(DEMO_STEPS[0].tab);
-  };
-
-  const handleNextDemoStep = () => {
-    if (demoStep < DEMO_STEPS.length - 1) {
-      const nextStep = demoStep + 1;
-      setDemoStep(nextStep);
-      setActiveTab(DEMO_STEPS[nextStep].tab);
-    } else {
-      setIsDemoFinished(true);
-    }
-  };
-
-  const handlePrevDemoStep = () => {
-    if (demoStep > 0) {
-      const prevStep = demoStep - 1;
-      setDemoStep(prevStep);
-      setActiveTab(DEMO_STEPS[prevStep].tab);
-    }
-  };
-
-  const handleStopDemo = () => {
-    setIsDemoActive(false);
-    setDemoStep(0);
-    setIsDemoFinished(false);
-  };
-
   const activeCohortCompletedCount = savedSessions.filter((s) => s.cohortId === selectedCohortId).length;
 
   return (
@@ -505,7 +503,7 @@ export default function App() {
           isFramed ? 'max-w-[440px]' : 'max-w-6xl'
         }`}
       >
-        {/* Header */}
+        {/* Header — Title: "Golf Discovery Studio" */}
         <Header
           isFramed={isFramed}
           onToggleFrame={() => setIsFramed(!isFramed)}
@@ -526,20 +524,8 @@ export default function App() {
           totalCompletedCount={savedSessions.length}
         />
 
-        {/* Main Content Area */}
+        {/* Main Content Area — Demo card removed; pure field operational prototype */}
         <main className="p-3.5 sm:p-5 pb-24 flex-1">
-          {/* Guided Demo Walkthrough Card */}
-          <GuidedDemoCard
-            isDemoActive={isDemoActive}
-            demoStep={demoStep}
-            demoSeconds={demoSeconds}
-            isDemoFinished={isDemoFinished}
-            onStartDemo={handleStartDemo}
-            onNextStep={handleNextDemoStep}
-            onPrevStep={handlePrevDemoStep}
-            onStopDemo={handleStopDemo}
-          />
-
           {/* Tab 1: Cohort Roster (25 Target / Cohort + Unlimited) */}
           {activeTab === 'participants' && (
             <ParticipantsView
@@ -601,6 +587,9 @@ export default function App() {
               responses={responses}
               activeParticipant={activeParticipant}
               storageEmail={storageConfig.storageEmail}
+              aiAnalysis={aiAnalysis}
+              onRunAIAnalysis={handleRunAIAnalysis}
+              isLoadingAIAnalysis={isLoadingAIAnalysis}
               onSaveSession={handleSubmitSession}
               onReturnToInterview={() => setActiveTab('interview')}
             />
@@ -632,11 +621,16 @@ export default function App() {
               isSyncing={isSyncing}
             />
           )}
+
+          {/* Tab 6: Operational Requirements Document (ORD) & Computer Scientist Review */}
+          {activeTab === 'ord' && (
+            <ORDView />
+          )}
         </main>
 
-        {/* Fixed Footer */}
+        {/* Clean Operational Footer */}
         <footer className="sticky bottom-0 z-20 w-full px-4 py-2 bg-white/95 backdrop-blur-sm border-t border-slate-200 text-[11px] text-center text-slate-500 font-medium flex items-center justify-between">
-          <span>Laptop & Mobile Video/Voice Discovery · 25 Quota / Cohort</span>
+          <span className="font-semibold text-slate-700">Golf Discovery Studio · Field-Ready Platform</span>
           <span className="font-mono text-emerald-800 font-semibold truncate max-w-[200px]">
             Target: {storageConfig.storageEmail}
           </span>

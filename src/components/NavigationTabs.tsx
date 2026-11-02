@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabType, CohortId } from '../types';
-import { Users, Video, ClipboardCheck, BarChart3, Database } from 'lucide-react';
+import { Users, Video, ClipboardCheck, BarChart3, Database, ShieldCheck } from 'lucide-react';
 
 interface NavigationTabsProps {
   activeTab: TabType;
@@ -49,10 +49,15 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       label: 'Storage & Email',
       icon: <Database className="w-3.5 h-3.5" />,
     },
+    {
+      id: 'ord',
+      label: 'ORD & PM Review',
+      icon: <ShieldCheck className="w-3.5 h-3.5" />,
+    },
   ];
 
   return (
-    <nav className="flex overflow-x-auto border-b border-slate-200 bg-white sticky top-[73px] z-20 shadow-xs no-scrollbar">
+    <nav className="flex overflow-x-auto border-b border-slate-200 bg-white sticky top-[69px] z-20 shadow-xs no-scrollbar">
       {tabs.map((t) => {
         const isActive = activeTab === t.id;
         return (
@@ -60,7 +65,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
             key={t.id}
             type="button"
             onClick={() => onTabChange(t.id)}
-            className={`flex-1 min-w-[76px] sm:min-w-[92px] py-3 px-1.5 flex items-center justify-center gap-1 text-[11px] font-semibold tracking-tight transition-all border-b-2 relative cursor-pointer ${
+            className={`flex-1 min-w-[70px] sm:min-w-[84px] py-2.5 px-1.5 flex items-center justify-center gap-1 text-[11px] font-semibold tracking-tight transition-all border-b-2 relative cursor-pointer ${
               isActive
                 ? 'text-emerald-800 border-emerald-800 bg-emerald-50/50'
                 : 'text-slate-600 border-transparent hover:text-slate-900 hover:bg-slate-50'

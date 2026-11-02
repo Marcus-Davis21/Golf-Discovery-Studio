@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Participant, QuestionResponse, RecordingMediaType } from '../types';
+import { Participant, QuestionResponse, RecordingMediaType, AIQualitativeAnalysis } from '../types';
+import { AIQualitativePanel } from './AIQualitativePanel';
 import {
   CheckCircle2,
   ArrowLeft,
@@ -32,6 +33,10 @@ interface ReviewViewProps {
   responses?: Record<number, QuestionResponse>;
   activeParticipant?: Participant | null;
   storageEmail?: string;
+  // Computer Scientist AI Pipeline Props
+  aiAnalysis?: AIQualitativeAnalysis;
+  onRunAIAnalysis: () => Promise<void> | void;
+  isLoadingAIAnalysis: boolean;
   onSaveSession: (dispatchEmail?: boolean) => void;
   onReturnToInterview: () => void;
 }
@@ -51,6 +56,9 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
   responses = {},
   activeParticipant,
   storageEmail = 'research-archive@golfdiscovery.org',
+  aiAnalysis,
+  onRunAIAnalysis,
+  isLoadingAIAnalysis,
   onSaveSession,
   onReturnToInterview,
 }) => {
@@ -66,7 +74,8 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
   const quotesList = Object.values(responses).filter((r) => r.quote?.trim());
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
+      {/* Session Verification Overview Card */}
       <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white shadow-xs">
         <div className="flex items-center justify-between mb-1">
           <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
@@ -77,7 +86,7 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
           </span>
         </div>
         <p className="text-xs text-slate-500 mb-4">
-          Verify participant observations and recorded media before committing to {cohortName} archives
+          Verify participant observations, recorded media, and AI qualitative intelligence before committing to {cohortName} archives
         </p>
 
         {/* Video / Voice Preview if recorded */}
@@ -247,36 +256,45 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
             </p>
           </div>
         )}
+      </div>
 
-        {/* Action Buttons */}
-        <div className="mt-5 space-y-2.5">
-          <button
-            type="button"
-            onClick={() => onSaveSession(false)}
-            className="w-full py-3.5 px-4 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-          >
-            <Save className="w-4 h-4" />
-            <span>Save to {cohortName} Study Database</span>
-          </button>
+      {/* Computer Scientist Pipeline: Cloud AI Qualitative Extraction Panel */}
+      <AIQualitativePanel
+        analysis={aiAnalysis}
+        onRunAnalysis={onRunAIAnalysis}
+        isLoading={isLoadingAIAnalysis}
+        participantName={activeParticipant?.name}
+        hasMediaRecording={Boolean(mediaBlobUrl)}
+      />
 
-          <button
-            type="button"
-            onClick={() => onSaveSession(true)}
-            className="w-full py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-          >
-            <Send className="w-3.5 h-3.5 text-emerald-800" />
-            <span>Save & Email Archive to {storageEmail}</span>
-          </button>
+      {/* Action Buttons Card */}
+      <div className="border border-slate-200 rounded-2xl p-4 bg-white shadow-xs space-y-2.5">
+        <button
+          type="button"
+          onClick={() => onSaveSession(false)}
+          className="w-full py-3.5 px-4 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+        >
+          <Save className="w-4 h-4" />
+          <span>Save to {cohortName} Study Database</span>
+        </button>
 
-          <button
-            type="button"
-            onClick={onReturnToInterview}
-            className="w-full py-2 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Interview</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onSaveSession(true)}
+          className="w-full py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+        >
+          <Send className="w-3.5 h-3.5 text-emerald-800" />
+          <span>Save & Email Full Package to {storageEmail}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={onReturnToInterview}
+          className="w-full py-2 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Return to Interview</span>
+        </button>
       </div>
     </div>
   );
