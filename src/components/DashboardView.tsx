@@ -41,6 +41,8 @@ interface DashboardViewProps {
   onClearSessions: () => void;
   onDeleteSession?: (id: string) => void;
   onNavigateToStorage?: () => void;
+  onNavigateToTranscribe?: () => void;
+  onUpdateSessionAnalysis?: (sessionId: string, analysis: any) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -53,9 +55,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onClearSessions,
   onDeleteSession,
   onNavigateToStorage,
+  onNavigateToTranscribe,
+  onUpdateSessionAnalysis,
 }) => {
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   const [activeFilterCohort, setActiveFilterCohort] = useState<CohortId | 'all'>('all');
+  const [transcribingSessionId, setTranscribingSessionId] = useState<string | null>(null);
 
   const formatTimer = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
@@ -182,8 +187,90 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  const handleTranscribeSessionInDashboard = async (session: SavedSession) => {
+    if (!onUpdateSessionAnalysis) return;
+    setTranscribingSessionId(session.id);
+
+    try {
+      let audioBase64: string | undefined = undefined;
+      let mimeType = session.mediaType === 'video_voice' ? 'video/webm' : 'audio/webm';
+
+      if (session.mediaBlobUrl) {
+        try {
+          const blobRes = await fetch(session.mediaBlobUrl);
+          const blob = await blobRes.blob();
+          mimeType = blob.type || mimeType;
+
+          const reader = new FileReader();
+          audioBase64 = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        } catch (blobErr) {
+          console.warn('Could not read media blob, using metadata:', blobErr);
+        }
+      }
+
+      const res = await fetch('/api/ai/transcribe-analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioBase64,
+          mimeType,
+          cohortName: session.cohortName,
+          participantName: session.participantName || 'Session Participant',
+          questions: COHORTS_DATA[session.cohortId]?.questions || [],
+          notes: session.notes,
+          responses: session.responses,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          onUpdateSessionAnalysis(session.id, json.data);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to transcribe session in dashboard:', err);
+    } finally {
+      setTranscribingSessionId(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
+      {/* Computer Scientist Video Transcriber Quick Access Banner */}
+      {onNavigateToTranscribe && (
+        <div className="border border-indigo-200 bg-gradient-to-r from-indigo-900 to-slate-900 rounded-2xl p-3.5 text-white shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/30 text-indigo-200 px-2 py-0.5 rounded">
+                  Computer Scientist Transcriber Hub
+                </span>
+                <span className="text-[10px] text-emerald-300 font-mono">gemini-3.8-flash</span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Transcribe interview videos into timestamped verbatim transcripts, quotes, barriers & sentiment.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onNavigateToTranscribe}
+            className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
+          >
+            <Video className="w-3.5 h-3.5" />
+            <span>Launch Video Transcriber</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       {/* 5-Cohort Study Progress Quota Card (Target: 25 Per Cohort) */}
       <div className="border border-slate-200 rounded-2xl p-4 bg-white shadow-xs">
         <div className="flex items-center justify-between mb-2">
@@ -490,16 +577,31 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       )}
 
                       {/* Computer Scientist Cloud AI Qualitative Extraction Block */}
-                      {session.aiAnalysis && (
+                      {session.aiAnalysis ? (
                         <div className="p-3 bg-gradient-to-br from-emerald-50/70 to-slate-50 border border-emerald-200 rounded-xl space-y-2.5">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between flex-wrap gap-1">
                             <span className="font-bold text-[11px] text-emerald-950 flex items-center gap-1.5">
                               <Brain className="w-3.5 h-3.5 text-emerald-700" />
                               Computer Scientist Cloud AI Intelligence ({session.aiAnalysis.modelUsed || 'gemini-3.8-flash'})
                             </span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                              Sentiment: {session.aiAnalysis.sentimentAnalysis.overall}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {onNavigateToTranscribe && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onNavigateToTranscribe();
+                                  }}
+                                  className="text-[10px] font-bold text-indigo-700 hover:text-indigo-900 bg-white px-2 py-0.5 rounded border border-indigo-200 flex items-center gap-1 cursor-pointer"
+                                >
+                                  <span>Open in Synchronizer</span>
+                                  <ChevronRight className="w-2.5 h-2.5" />
+                                </button>
+                              )}
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                                Sentiment: {session.aiAnalysis.sentimentAnalysis.overall}
+                              </span>
+                            </div>
                           </div>
 
                           {/* Sentiment Breakdown Bars */}
@@ -635,6 +737,34 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                               </div>
                             </div>
                           )}
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-indigo-50/80 border border-indigo-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                              <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+                            </div>
+                            <div>
+                              <div className="font-bold text-slate-900 text-xs">
+                                Ready for Computer Scientist AI Transcription
+                              </div>
+                              <div className="text-[10px] text-slate-500">
+                                Extract 5-pillar qualitative intelligence (transcript, soundbites, barriers, tools, sentiment)
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTranscribeSessionInDashboard(session);
+                            }}
+                            disabled={transcribingSessionId === session.id}
+                            className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer shrink-0 disabled:opacity-50"
+                          >
+                            <Sparkles className={`w-3.5 h-3.5 ${transcribingSessionId === session.id ? 'animate-spin' : ''}`} />
+                            <span>{transcribingSessionId === session.id ? 'Processing Pipeline...' : 'Transcribe Video Now'}</span>
+                          </button>
                         </div>
                       )}
 

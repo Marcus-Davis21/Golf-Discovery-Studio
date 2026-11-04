@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {
   CohortId,
   TabType,
+  PostInterviewSubTab,
   SavedSession,
   Participant,
   StorageConfig,
   QuestionResponse,
   RecordingMediaType,
+  AIQualitativeAnalysis,
 } from './types';
 import {
   COHORTS_DATA,
@@ -19,6 +21,8 @@ import { NavigationTabs } from './components/NavigationTabs';
 import { ParticipantsView } from './components/ParticipantsView';
 import { InterviewView } from './components/InterviewView';
 import { ReviewView } from './components/ReviewView';
+import { PostInterviewHub } from './components/PostInterviewHub';
+import { TranscriberView } from './components/TranscriberView';
 import { DashboardView } from './components/DashboardView';
 import { StorageView } from './components/StorageView';
 import { ORDView } from './components/ORDView';
@@ -26,8 +30,19 @@ import { ORDView } from './components/ORDView';
 export default function App() {
   // Navigation & Viewport State
   const [activeTab, setActiveTab] = useState<TabType>('participants');
+  const [postInterviewSubTab, setPostInterviewSubTab] = useState<PostInterviewSubTab>('dashboard');
   const [selectedCohortId, setSelectedCohortId] = useState<CohortId>('aspiring');
   const [isFullInterview, setIsFullInterview] = useState<boolean>(true);
+
+  // Unified navigation handler supporting both primary tabs and direct second-screen routing
+  const handleTabChange = (tab: TabType) => {
+    if (tab === 'transcribe' || tab === 'dashboard' || tab === 'storage' || tab === 'ord') {
+      setPostInterviewSubTab(tab);
+      setActiveTab('post_interview');
+    } else {
+      setActiveTab(tab);
+    }
+  };
 
   // Laptop vs Mobile phone viewport toggle
   const [isFramed, setIsFramed] = useState<boolean>(() => {
@@ -316,6 +331,32 @@ export default function App() {
     }
   };
 
+  // Update session with new transcription / AI analysis
+  const handleUpdateSessionAnalysis = async (sessionId: string, analysis: AIQualitativeAnalysis) => {
+    setSavedSessions((prev) => {
+      const updated = prev.map((s) => (s.id === sessionId ? { ...s, aiAnalysis: analysis } : s));
+      try {
+        localStorage.setItem('gdsSavedSessions', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Local storage write error:', e);
+      }
+      return updated;
+    });
+
+    try {
+      const existingSession = savedSessions.find((s) => s.id === sessionId);
+      if (existingSession) {
+        await fetch('/api/sessions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...existingSession, aiAnalysis: analysis }),
+        });
+      }
+    } catch (err) {
+      console.error('Failed to sync updated session analysis to backend:', err);
+    }
+  };
+
   // Submit Session with optional Email Dispatch
   const handleSubmitSession = async (dispatchEmail: boolean = false) => {
     const sessionId = 'session-' + Date.now();
@@ -508,23 +549,23 @@ export default function App() {
           isFramed={isFramed}
           onToggleFrame={() => setIsFramed(!isFramed)}
           storageEmail={storageConfig.storageEmail}
-          onNavigateToStorage={() => setActiveTab('storage')}
+          onNavigateToStorage={() => handleTabChange('storage')}
           sessionCount={savedSessions.length}
           totalTargetCount={storageConfig.totalTargetCount || 125}
           activeCohortName={COHORTS_DATA[selectedCohortId].name}
         />
 
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs — 4 Clean Spacious Tabs (Roster, Interview, Review, Post-Interview Hub) */}
         <NavigationTabs
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
           isRecording={isRecording}
           cohortCompletedCount={activeCohortCompletedCount}
           cohortTargetCount={storageConfig.targetCountPerCohort || 25}
           totalCompletedCount={savedSessions.length}
         />
 
-        {/* Main Content Area — Demo card removed; pure field operational prototype */}
+        {/* Main Content Area */}
         <main className="p-3.5 sm:p-5 pb-24 flex-1">
           {/* Tab 1: Cohort Roster (25 Target / Cohort + Unlimited) */}
           {activeTab === 'participants' && (
@@ -592,39 +633,43 @@ export default function App() {
               isLoadingAIAnalysis={isLoadingAIAnalysis}
               onSaveSession={handleSubmitSession}
               onReturnToInterview={() => setActiveTab('interview')}
+              onNavigateToTranscribe={() => handleTabChange('transcribe')}
             />
           )}
 
-          {/* Tab 4: All Cohorts Dashboard (Target: 25 / Cohort) */}
-          {activeTab === 'dashboard' && (
-            <DashboardView
+          {/* Tab 4: Second Screen — Post-Interview Research Hub (Consolidates AI Transcriber, All Cohorts, Storage & Email, ORD & PM) */}
+          {(activeTab === 'post_interview' ||
+            activeTab === 'transcribe' ||
+            activeTab === 'dashboard' ||
+            activeTab === 'storage' ||
+            activeTab === 'ord') && (
+            <PostInterviewHub
+              activeSubTab={postInterviewSubTab}
+              onSubTabChange={setPostInterviewSubTab}
+              savedSessions={savedSessions}
+              activeRecordingBlobUrl={mediaBlobUrl}
+              activeRecordingType={mediaType}
+              activeRecordingSeconds={recordedSeconds}
+              activeParticipantName={activeParticipant?.name}
+              activeCohortId={selectedCohortId}
+              onUpdateSessionAnalysis={handleUpdateSessionAnalysis}
+              onNavigateToInterview={() => setActiveTab('interview')}
               sessionCount={savedSessions.length}
               activeCohortName={COHORTS_DATA[selectedCohortId].name}
-              savedSessions={savedSessions}
               participants={participants}
               storageEmail={storageConfig.storageEmail}
               targetCountPerCohort={storageConfig.targetCountPerCohort || 25}
               onClearSessions={handleClearSessions}
               onDeleteSession={handleDeleteSession}
-              onNavigateToStorage={() => setActiveTab('storage')}
-            />
-          )}
-
-          {/* Tab 5: Storage & Email Archive */}
-          {activeTab === 'storage' && (
-            <StorageView
+              onNavigateToStorage={() => {
+                setPostInterviewSubTab('storage');
+                setActiveTab('post_interview');
+              }}
               storageConfig={storageConfig}
               onUpdateStorageConfig={handleUpdateStorageConfig}
-              savedSessions={savedSessions}
-              participants={participants}
               onSyncNow={handleSyncNow}
               isSyncing={isSyncing}
             />
-          )}
-
-          {/* Tab 6: Operational Requirements Document (ORD) & Computer Scientist Review */}
-          {activeTab === 'ord' && (
-            <ORDView />
           )}
         </main>
 

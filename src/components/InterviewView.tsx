@@ -114,6 +114,37 @@ export const InterviewView: React.FC<InterviewViewProps> = ({
     setShowQuoteInput(Boolean(resp.quote));
   }, [currentIndex, responses, questions]);
 
+  // Computer Scientist Ergonomics: Hands-free Field Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+
+      if (e.code === 'Space' && !isInput) {
+        e.preventDefault();
+        if (!isRecording) {
+          onStartRecording();
+        } else if (isPaused) {
+          onResumeRecording();
+        } else {
+          onPauseRecording();
+        }
+      } else if (e.altKey && e.key === 'ArrowRight' && !isInput) {
+        e.preventDefault();
+        onNextQuestion();
+      } else if (e.altKey && e.key === 'ArrowLeft' && !isInput) {
+        e.preventDefault();
+        onPrevQuestion();
+      } else if (e.altKey && (e.key === 'q' || e.key === 'Q')) {
+        e.preventDefault();
+        setShowQuoteInput((prev) => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isRecording, isPaused, onStartRecording, onPauseRecording, onResumeRecording, onNextQuestion, onPrevQuestion]);
+
   const handleAnswerChange = (val: string) => {
     setCurrentAnswer(val);
     onSaveQuestionResponse(currentIndex, {
@@ -290,13 +321,28 @@ export const InterviewView: React.FC<InterviewViewProps> = ({
         <div className="lg:col-span-7 space-y-4">
           <div className="border border-slate-200 rounded-2xl p-4 bg-white shadow-xs">
             {/* Question Progress Header */}
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-2">
-              <span className="flex items-center gap-1 text-slate-800">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-1.5 flex-wrap gap-1">
+              <span className="flex items-center gap-1.5 text-slate-800">
                 <span className="font-bold">Question {currentIndex + 1}</span> of {questions.length}
+                <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  Mom Test Certified
+                </span>
               </span>
               <span className="text-[11px] text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                 {answeredCount} of {questions.length} Logged
               </span>
+            </div>
+
+            {/* Computer Scientist Ergonomics: Hands-Free Shortcuts Guide */}
+            <div className="hidden sm:flex items-center justify-between text-[10px] text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/80 mb-2 font-mono">
+              <span className="font-bold text-slate-700">Field Ergonomics:</span>
+              <span>[Space] Record/Pause</span>
+              <span>•</span>
+              <span>[Alt + →] Next</span>
+              <span>•</span>
+              <span>[Alt + ←] Prev</span>
+              <span>•</span>
+              <span>[Alt + Q] Quote</span>
             </div>
 
             {/* Progress Bar */}

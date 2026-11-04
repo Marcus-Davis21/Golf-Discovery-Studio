@@ -16,6 +16,9 @@ import {
   Video,
   Mic,
   Download,
+  Sparkles,
+  ChevronRight,
+  Layers,
 } from 'lucide-react';
 
 interface ReviewViewProps {
@@ -39,6 +42,7 @@ interface ReviewViewProps {
   isLoadingAIAnalysis: boolean;
   onSaveSession: (dispatchEmail?: boolean) => void;
   onReturnToInterview: () => void;
+  onNavigateToTranscribe?: () => void;
 }
 
 export const ReviewView: React.FC<ReviewViewProps> = ({
@@ -61,6 +65,7 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
   isLoadingAIAnalysis,
   onSaveSession,
   onReturnToInterview,
+  onNavigateToTranscribe,
 }) => {
   const [showFullResponses, setShowFullResponses] = useState(false);
 
@@ -108,14 +113,26 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
               <audio src={mediaBlobUrl} controls className="w-full" />
             )}
 
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between text-[11px] pt-1">
+              {onNavigateToTranscribe ? (
+                <button
+                  type="button"
+                  onClick={onNavigateToTranscribe}
+                  className="text-[10px] font-bold text-emerald-300 hover:text-white inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <Sparkles className="w-3 h-3 text-emerald-400" />
+                  <span>Open in Synchronized Video Transcriber</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              ) : <div />}
+
               <a
                 href={mediaBlobUrl}
                 download={`interview-${cohortName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.webm`}
                 className="text-[10px] font-bold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 underline"
               >
                 <Download className="w-3 h-3" />
-                <span>Save Local Copy to Device</span>
+                <span>Save Local Copy</span>
               </a>
             </div>
           </div>
@@ -285,6 +302,18 @@ export const ReviewView: React.FC<ReviewViewProps> = ({
         >
           <Send className="w-3.5 h-3.5 text-emerald-800" />
           <span>Save & Email Full Package to {storageEmail}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            onSaveSession(false);
+            if (onNavigateToTranscribe) onNavigateToTranscribe();
+          }}
+          className="w-full py-2.5 px-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 text-indigo-950 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+        >
+          <Layers className="w-3.5 h-3.5 text-indigo-700" />
+          <span>Save & View Post-Interview Hub (Second Screen)</span>
         </button>
 
         <button

@@ -1,6 +1,16 @@
 export type CohortId = 'aspiring' | 'novice' | 'amateur' | 'mid' | 'coach';
 
-export type TabType = 'participants' | 'interview' | 'review' | 'dashboard' | 'storage' | 'ord';
+export type PostInterviewSubTab = 'transcribe' | 'dashboard' | 'storage' | 'ord';
+
+export type TabType =
+  | 'participants'
+  | 'interview'
+  | 'review'
+  | 'post_interview'
+  | 'transcribe'
+  | 'dashboard'
+  | 'storage'
+  | 'ord';
 
 export type InterviewMode = 'quick' | 'full';
 

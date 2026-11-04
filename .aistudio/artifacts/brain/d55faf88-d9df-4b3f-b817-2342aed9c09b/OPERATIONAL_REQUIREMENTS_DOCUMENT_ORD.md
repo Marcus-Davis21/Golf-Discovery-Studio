@@ -116,6 +116,22 @@ The platform implements the Computer Scientist's automated qualitative intellige
   4. *Current Tools & Improvised Drills:* Makeshift aids (towel drills, alignment sticks, coat hangers), sourcing (`purchased`, `improvised_diy`, `coach_given`, `online_video`), outcomes, and abandonment reasons.
   5. *Sentiment Analysis:* Overall qualitative state (`Enthusiastic`, `Frustrated`, `Hesitant`, `Analytical`, `Mixed`), numerical breakdown percentages summing to 100%, and key emotional inflection moments.
 
+### 5.4 Computer Scientist Ergonomics & User Usability (UU) Layout Specifications
+To support seamless field customer discovery interviews on both mobile devices and laptops, the following ergonomic and layout specifications are implemented:
+1. **Hands-Free Field Keyboard Shortcuts:**
+   - `[Space]`: Toggle record / pause / resume without taking hands off the desk.
+   - `[Alt + →]` / `[Alt + ←]`: Advance to next or previous question in the certified script.
+   - `[Alt + Q]`: Instant verbatim quote capture box toggle.
+2. **Interactive Video & Synchronized Transcript Seeking:**
+   - Verbatim transcript timestamps are interactive; clicking any turn (`01:23`) seeks the media player to that exact timecode.
+3. **Dual Form Factor Viewport Ergonomics:**
+   - *Laptop / Desktop View:* Wide split-screen view with video monitor, audio wave meter, live timer, and question script side-by-side.
+   - *Mobile / Field Touch View:* Single-column thumb-friendly layout with front/rear camera switching (`facingMode: 'user' | 'environment'`).
+4. **Dedicated Video Transcriber Hub:**
+   - 1st-class tab in the navigation bar enabling researchers to transcribe current sessions, archive sessions, or upload external files (`.webm`, `.mp4`, `.mov`, `.m4a`, `.wav`).
+5. **In-Dashboard 1-Click Pipeline Triggers:**
+   - Any interview in the sessions archive can be transcribed directly from the dashboard with live progress indicators.
+
 ---
 
 ## 6. Data Storage, Retention & External Email Delivery

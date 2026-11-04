@@ -84,6 +84,35 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
+// Download Full Operational Requirements Document (ORD / PRD / PM Review)
+app.get('/api/download/ord', (_req, res) => {
+  const publicOrd = path.join(__dirname, 'public', 'OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md');
+  const artifactOrd = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md';
+
+  const targetPath = fs.existsSync(publicOrd) ? publicOrd : fs.existsSync(artifactOrd) ? artifactOrd : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="GOLF_DISCOVERY_STUDIO_ORD_PRD.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'ORD document not found' });
+});
+
+// View Full ORD Raw Content
+app.get('/api/ord', (_req, res) => {
+  const publicOrd = path.join(__dirname, 'public', 'OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md');
+  const artifactOrd = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md';
+
+  const targetPath = fs.existsSync(publicOrd) ? publicOrd : fs.existsSync(artifactOrd) ? artifactOrd : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'ORD document not found' });
+});
+
 // Full study state (sessions, participants, config)
 app.get('/api/study', (_req, res) => {
   const data = readDb();

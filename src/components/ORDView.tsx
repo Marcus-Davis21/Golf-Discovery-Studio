@@ -162,7 +162,7 @@ export const ORDView: React.FC<ORDViewProps> = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
             <button
               type="button"
               onClick={copyORDText}
@@ -170,18 +170,61 @@ export const ORDView: React.FC<ORDViewProps> = () => {
               title="Copy ORD to Clipboard"
             >
               {copiedORD ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-              <span className="hidden sm:inline">{copiedORD ? 'Copied' : 'Copy'}</span>
+              <span className="hidden sm:inline">{copiedORD ? 'Copied' : 'Copy Text'}</span>
             </button>
 
-            <button
-              type="button"
-              onClick={downloadORDMarkdown}
-              className="p-2 rounded-xl bg-emerald-800 text-white hover:bg-emerald-900 text-xs font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
-              title="Download ORD Markdown File"
+            <a
+              href="/api/ord"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+              title="Open Raw Markdown in New Tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+              <span className="hidden sm:inline">View Raw</span>
+            </a>
+
+            <a
+              href="/api/download/ord"
+              download="GOLF_DISCOVERY_STUDIO_ORD_PRD.md"
+              className="p-2 sm:px-3 rounded-xl bg-emerald-800 text-white hover:bg-emerald-900 text-xs font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
+              title="Direct Download ORD Markdown File"
             >
               <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Download ORD</span>
-            </button>
+              <span>Download ORD / PRD</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Direct Download & PM Access Link Banner */}
+        <div className="mt-2.5 p-2.5 bg-white/80 border border-emerald-300 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-1.5 text-emerald-950 font-medium">
+            <span className="font-bold bg-emerald-800 text-white text-[10px] px-2 py-0.5 rounded font-mono">
+              DIRECT URL
+            </span>
+            <span className="font-mono text-[11px] text-slate-800 truncate select-all">
+              /api/download/ord
+            </span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href="/api/download/ord"
+              download="GOLF_DISCOVERY_STUDIO_ORD_PRD.md"
+              className="text-emerald-800 hover:text-emerald-950 font-bold text-[11px] underline flex items-center gap-0.5"
+            >
+              <Download className="w-3 h-3" />
+              <span>1-Click Download .md</span>
+            </a>
+            <span className="text-slate-300">|</span>
+            <a
+              href="/OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-800 hover:text-emerald-950 font-bold text-[11px] underline flex items-center gap-0.5"
+            >
+              <ExternalLink className="w-3 h-3" />
+              <span>Direct Link</span>
+            </a>
           </div>
         </div>
 
@@ -325,6 +368,16 @@ export const ORDView: React.FC<ORDViewProps> = () => {
                 <div className="text-slate-300">├── 3. Identified Barriers & Friction Points</div>
                 <div className="text-slate-300">├── 4. Current Tools & Improvised Drills</div>
                 <div className="text-slate-300">└── 5. Sentiment (Enthusiastic, Frustrated, Hesitant)</div>
+              </div>
+
+              <div className="text-[11px] text-slate-600 space-y-1 mt-2">
+                <b>Computer Scientist Ergonomics & User Usability (UU) Layout:</b>
+                <ul className="list-disc pl-4 space-y-0.5">
+                  <li><b>Hands-Free Field Shortcuts:</b> [Space] toggle record/pause; [Alt+→] next question; [Alt+←] previous question; [Alt+Q] quote capture.</li>
+                  <li><b>Synchronized Video Seeking:</b> Clicking any timestamp in the verbatim transcript immediately seeks the video to that moment.</li>
+                  <li><b>Dedicated Video Transcriber Hub:</b> First-class tab for processing current recordings, archived study sessions, or uploaded video files (.webm, .mp4).</li>
+                  <li><b>1-Click In-Dashboard Transcription:</b> Instant qualitative extraction directly from the session archive without losing context.</li>
+                </ul>
               </div>
             </section>
 
