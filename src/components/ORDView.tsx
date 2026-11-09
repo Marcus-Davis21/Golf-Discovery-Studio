@@ -214,6 +214,16 @@ export const ORDView: React.FC<ORDViewProps> = () => {
             </a>
 
             <a
+              href="/api/download/executive-report"
+              download="REVISED_CUSTOMER_DISCOVERY_REPORT_EXECUTIVE_DIRECTOR.md"
+              className="px-3.5 py-2 rounded-xl bg-slate-900 text-white hover:bg-black text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer border border-emerald-500"
+              title="Download Revised Customer Discovery Report for Executive Director (Markdown)"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Exec Report (.md)</span>
+            </a>
+
+            <a
               href="/api/download/stakeholder-memorandum"
               download="STAKEHOLDER_MEMORANDUM_BRIEF_GOLF_RESISTANCE.md"
               className="px-3.5 py-2 rounded-xl bg-indigo-900 text-white hover:bg-slate-900 text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer border border-indigo-700"
@@ -241,6 +251,11 @@ export const ORDView: React.FC<ORDViewProps> = () => {
             <span className="font-bold bg-emerald-800 text-white text-[10px] px-2 py-0.5 rounded font-mono">
               STAKEHOLDER DIRECT LINKS
             </span>
+            <span className="text-slate-600">Exec Report:</span>
+            <code className="text-emerald-950 font-bold bg-emerald-100 px-1.5 py-0.5 rounded text-[11px] select-all">
+              /api/download/executive-report
+            </code>
+            <span className="text-slate-300 hidden md:inline">|</span>
             <span className="text-slate-600">Stakeholder Memo:</span>
             <code className="text-indigo-950 font-bold bg-indigo-100 px-1.5 py-0.5 rounded text-[11px] select-all">
               /api/download/stakeholder-memorandum

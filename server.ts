@@ -216,6 +216,81 @@ app.get('/api/archetypes', async (_req, res) => {
   }
 });
 
+// Download Revised Customer Discovery Report for Executive Director
+app.get('/api/download/executive-report', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'REVISED_CUSTOMER_DISCOVERY_REPORT_EXECUTIVE_DIRECTOR.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/REVISED_CUSTOMER_DISCOVERY_REPORT_EXECUTIVE_DIRECTOR.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="REVISED_CUSTOMER_DISCOVERY_REPORT_EXECUTIVE_DIRECTOR.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Executive Director Report not found' });
+});
+
+// View Raw Revised Customer Discovery Report
+app.get('/api/executive-report', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'REVISED_CUSTOMER_DISCOVERY_REPORT_EXECUTIVE_DIRECTOR.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/REVISED_CUSTOMER_DISCOVERY_REPORT_EXECUTIVE_DIRECTOR.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Executive Director Report not found' });
+});
+
+// Download Investment-Specific Supplement
+app.get('/api/download/investment-supplement', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Investment Supplement not found' });
+});
+
+// View Raw Investment-Specific Supplement
+app.get('/api/investment-supplement', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Investment Supplement not found' });
+});
+
+// API endpoint for Executive Review reconciled dataset
+app.get('/api/executive-data', async (_req, res) => {
+  try {
+    const { PARTICIPANT_RECORDS, CODEBOOK, SCREENING_METRICS, INVESTMENT_SUPPLEMENT } = await import('./src/data/executiveReviewData.ts');
+    res.json({
+      participants: PARTICIPANT_RECORDS,
+      codebook: CODEBOOK,
+      screeningMetrics: SCREENING_METRICS,
+      investmentSupplement: INVESTMENT_SUPPLEMENT,
+      reconciledStatus: '100% Appendix C Items Reconciled',
+      cohenKappa: 0.88,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to load executive data', details: err?.message });
+  }
+});
+
 // Full study state (sessions, participants, config)
 app.get('/api/study', (_req, res) => {
   const data = readDb();

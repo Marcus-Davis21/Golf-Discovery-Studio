@@ -1,6 +1,13 @@
 export type CohortId = 'aspiring' | 'novice' | 'amateur' | 'mid' | 'coach';
 
-export type PostInterviewSubTab = 'transcribe' | 'dashboard' | 'storage' | 'ord' | 'mid_market_validation' | 'memorandum';
+export type PostInterviewSubTab =
+  | 'transcribe'
+  | 'dashboard'
+  | 'storage'
+  | 'ord'
+  | 'mid_market_validation'
+  | 'memorandum'
+  | 'executive_review';
 
 export type TabType =
   | 'participants'
@@ -12,7 +19,8 @@ export type TabType =
   | 'storage'
   | 'ord'
   | 'mid_market_validation'
-  | 'memorandum';
+  | 'memorandum'
+  | 'executive_review';
 
 export type InterviewMode = 'quick' | 'full';
 

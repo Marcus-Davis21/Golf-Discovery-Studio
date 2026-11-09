@@ -42,7 +42,8 @@ export default function App() {
       tab === 'storage' ||
       tab === 'ord' ||
       tab === 'mid_market_validation' ||
-      tab === 'memorandum'
+      tab === 'memorandum' ||
+      tab === 'executive_review'
     ) {
       setPostInterviewSubTab(tab);
       setActiveTab('post_interview');
@@ -651,7 +652,8 @@ export default function App() {
             activeTab === 'storage' ||
             activeTab === 'ord' ||
             activeTab === 'mid_market_validation' ||
-            activeTab === 'memorandum') && (
+            activeTab === 'memorandum' ||
+            activeTab === 'executive_review') && (
             <PostInterviewHub
               activeSubTab={postInterviewSubTab}
               onSubTabChange={setPostInterviewSubTab}

@@ -13,6 +13,7 @@ import { StorageView } from './StorageView';
 import { ORDView } from './ORDView';
 import { MidLevelMarketFitView } from './MidLevelMarketFitView';
 import { StakeholderMemorandumView } from './StakeholderMemorandumView';
+import { ExecutiveReviewView } from './ExecutiveReviewView';
 import {
   Sparkles,
   BarChart3,
@@ -25,6 +26,7 @@ import {
   ChevronRight,
   Target,
   Briefcase,
+  FileCheck,
 } from 'lucide-react';
 
 interface PostInterviewHubProps {
@@ -134,6 +136,14 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
       icon: <Briefcase className="w-5 h-5 text-emerald-700 shrink-0" />,
       badge: '$250k Funding',
       badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold',
+    },
+    {
+      id: 'executive_review',
+      title: 'Executive Review',
+      subtitle: 'Reconciled report & $250k supplement',
+      icon: <FileCheck className="w-5 h-5 text-indigo-700 shrink-0" />,
+      badge: 'Reconciled',
+      badgeColor: 'bg-indigo-100 text-indigo-900 border-indigo-300 font-bold',
     },
   ];
 
@@ -268,6 +278,8 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
         {activeSubTab === 'mid_market_validation' && <MidLevelMarketFitView />}
 
         {activeSubTab === 'memorandum' && <StakeholderMemorandumView />}
+
+        {activeSubTab === 'executive_review' && <ExecutiveReviewView />}
       </div>
     </div>
   );
