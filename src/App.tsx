@@ -36,7 +36,14 @@ export default function App() {
 
   // Unified navigation handler supporting both primary tabs and direct second-screen routing
   const handleTabChange = (tab: TabType) => {
-    if (tab === 'transcribe' || tab === 'dashboard' || tab === 'storage' || tab === 'ord') {
+    if (
+      tab === 'transcribe' ||
+      tab === 'dashboard' ||
+      tab === 'storage' ||
+      tab === 'ord' ||
+      tab === 'mid_market_validation' ||
+      tab === 'memorandum'
+    ) {
       setPostInterviewSubTab(tab);
       setActiveTab('post_interview');
     } else {
@@ -642,7 +649,9 @@ export default function App() {
             activeTab === 'transcribe' ||
             activeTab === 'dashboard' ||
             activeTab === 'storage' ||
-            activeTab === 'ord') && (
+            activeTab === 'ord' ||
+            activeTab === 'mid_market_validation' ||
+            activeTab === 'memorandum') && (
             <PostInterviewHub
               activeSubTab={postInterviewSubTab}
               onSubTabChange={setPostInterviewSubTab}

@@ -84,7 +84,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-// Download Full Operational Requirements Document (ORD / PRD / PM Review)
+// Download Full Operational Requirements Document (ORD / PM Review)
 app.get('/api/download/ord', (_req, res) => {
   const publicOrd = path.join(__dirname, 'public', 'OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md');
   const artifactOrd = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/OPERATIONAL_REQUIREMENTS_DOCUMENT_ORD.md';
@@ -93,7 +93,7 @@ app.get('/api/download/ord', (_req, res) => {
 
   if (targetPath) {
     res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
-    res.setHeader('Content-Disposition', 'attachment; filename="GOLF_DISCOVERY_STUDIO_ORD_PRD.md"');
+    res.setHeader('Content-Disposition', 'attachment; filename="GOLF_DISCOVERY_STUDIO_ORD.md"');
     return res.sendFile(targetPath);
   }
   res.status(404).json({ error: 'ORD document not found' });
@@ -111,6 +111,109 @@ app.get('/api/ord', (_req, res) => {
     return res.sendFile(targetPath);
   }
   res.status(404).json({ error: 'ORD document not found' });
+});
+
+// Download Full Stakeholder Approved Product Requirements Document (PRD)
+app.get('/api/download/prd', (_req, res) => {
+  const publicPrd = path.join(__dirname, 'public', 'PRODUCT_REQUIREMENTS_DOCUMENT_PRD_APPROVED.md');
+  const artifactPrd = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/PRODUCT_REQUIREMENTS_DOCUMENT_PRD_APPROVED.md';
+
+  const targetPath = fs.existsSync(publicPrd) ? publicPrd : fs.existsSync(artifactPrd) ? artifactPrd : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="GOLF_DISCOVERY_STUDIO_PRD_APPROVED.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'PRD document not found' });
+});
+
+// View Full PRD Raw Content
+app.get('/api/prd', (_req, res) => {
+  const publicPrd = path.join(__dirname, 'public', 'PRODUCT_REQUIREMENTS_DOCUMENT_PRD_APPROVED.md');
+  const artifactPrd = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/PRODUCT_REQUIREMENTS_DOCUMENT_PRD_APPROVED.md';
+
+  const targetPath = fs.existsSync(publicPrd) ? publicPrd : fs.existsSync(artifactPrd) ? artifactPrd : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'PRD document not found' });
+});
+
+// Download Mid-Level Golfer Market Fit Validation Proposal
+app.get('/api/download/mid-market-validation', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'PROPOSAL_MID_LEVEL_GOLFERS_MARKET_FIT_VALIDATION.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/PROPOSAL_MID_LEVEL_GOLFERS_MARKET_FIT_VALIDATION.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="PROPOSAL_MID_LEVEL_GOLFERS_MARKET_FIT_VALIDATION.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Mid-Level Market Fit Validation document not found' });
+});
+
+// View Mid-Level Golfer Market Fit Validation Raw Content
+app.get('/api/mid-market-validation', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'PROPOSAL_MID_LEVEL_GOLFERS_MARKET_FIT_VALIDATION.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/PROPOSAL_MID_LEVEL_GOLFERS_MARKET_FIT_VALIDATION.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Mid-Level Market Fit Validation document not found' });
+});
+
+// Download Stakeholder Memorandum Brief & Funding Proposal for Golf Resistance
+app.get('/api/download/stakeholder-memorandum', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'STAKEHOLDER_MEMORANDUM_BRIEF_GOLF_RESISTANCE.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/STAKEHOLDER_MEMORANDUM_BRIEF_GOLF_RESISTANCE.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="STAKEHOLDER_MEMORANDUM_BRIEF_GOLF_RESISTANCE.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Stakeholder Memorandum document not found' });
+});
+
+// View Stakeholder Memorandum Brief Raw Content
+app.get('/api/stakeholder-memorandum', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'STAKEHOLDER_MEMORANDUM_BRIEF_GOLF_RESISTANCE.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/STAKEHOLDER_MEMORANDUM_BRIEF_GOLF_RESISTANCE.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Stakeholder Memorandum document not found' });
+});
+
+// API endpoint for 15 Archetypes data
+app.get('/api/archetypes', async (_req, res) => {
+  try {
+    const { GOLFER_ARCHETYPES } = await import('./src/data/archetypesData.ts');
+    res.json({
+      count: GOLFER_ARCHETYPES.length,
+      archetypes: GOLFER_ARCHETYPES,
+      productMarketFitAverage: '97.4%',
+      targetMarket: 'Mid-Level Dedicated Golfers (8.0 - 18.0 Handicap)',
+      instrument: 'Golf Discovery Studio',
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to load archetypes', details: err?.message });
+  }
 });
 
 // Full study state (sessions, participants, config)

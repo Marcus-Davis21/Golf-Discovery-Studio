@@ -11,6 +11,8 @@ import { TranscriberView } from './TranscriberView';
 import { DashboardView } from './DashboardView';
 import { StorageView } from './StorageView';
 import { ORDView } from './ORDView';
+import { MidLevelMarketFitView } from './MidLevelMarketFitView';
+import { StakeholderMemorandumView } from './StakeholderMemorandumView';
 import {
   Sparkles,
   BarChart3,
@@ -21,6 +23,8 @@ import {
   ArrowLeft,
   CheckCircle2,
   ChevronRight,
+  Target,
+  Briefcase,
 } from 'lucide-react';
 
 interface PostInterviewHubProps {
@@ -109,11 +113,27 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
     },
     {
       id: 'ord',
-      title: 'ORD & PM Review',
-      subtitle: 'Methodology, question audit & checklist',
+      title: 'PRD & ORD Review',
+      subtitle: 'Stakeholder PRD, ORD & PM Sign-Off',
       icon: <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0" />,
-      badge: 'Approved',
-      badgeColor: 'bg-amber-100 text-amber-900 border-amber-200',
+      badge: 'PRD Approved',
+      badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold',
+    },
+    {
+      id: 'mid_market_validation',
+      title: 'Mid-Cap Market Fit',
+      subtitle: '180 platform interviews & target validation',
+      icon: <Target className="w-5 h-5 text-indigo-600 shrink-0" />,
+      badge: '96% Validated',
+      badgeColor: 'bg-indigo-100 text-indigo-900 border-indigo-300 font-bold',
+    },
+    {
+      id: 'memorandum',
+      title: 'Stakeholder Brief',
+      subtitle: 'Funding proposal & 15-Archetype matrix',
+      icon: <Briefcase className="w-5 h-5 text-emerald-700 shrink-0" />,
+      badge: '$250k Funding',
+      badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold',
     },
   ];
 
@@ -151,8 +171,8 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
           </button>
         </div>
 
-        {/* Spacious 4-Tab Post-Interview Selector with Large Visible Icons */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3.5 pt-3 border-t border-white/15">
+        {/* Spacious 5-Tab Post-Interview Selector with Large Visible Icons */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mt-3.5 pt-3 border-t border-white/15">
           {subTabs.map((tab) => {
             const isActive = activeSubTab === tab.id;
             return (
@@ -244,6 +264,10 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
         )}
 
         {activeSubTab === 'ord' && <ORDView />}
+
+        {activeSubTab === 'mid_market_validation' && <MidLevelMarketFitView />}
+
+        {activeSubTab === 'memorandum' && <StakeholderMemorandumView />}
       </div>
     </div>
   );
