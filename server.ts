@@ -291,6 +291,35 @@ app.get('/api/executive-data', async (_req, res) => {
   }
 });
 
+// Download Investor Communication Briefing Packet
+app.get('/api/download/investor-briefing', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'INVESTOR_COMMUNICATION_BRIEFING_PACKET.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/INVESTOR_COMMUNICATION_BRIEFING_PACKET.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="INVESTOR_COMMUNICATION_BRIEFING_PACKET.md"');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Investor Briefing Packet not found' });
+});
+
+// View Raw Investor Communication Briefing Packet
+app.get('/api/investor-briefing', (_req, res) => {
+  const publicFile = path.join(__dirname, 'public', 'INVESTOR_COMMUNICATION_BRIEFING_PACKET.md');
+  const artifactFile = '/.aistudio/artifacts/brain/d55faf88-d9df-4b3f-b817-2342aed9c09b/INVESTOR_COMMUNICATION_BRIEFING_PACKET.md';
+
+  const targetPath = fs.existsSync(publicFile) ? publicFile : fs.existsSync(artifactFile) ? artifactFile : null;
+
+  if (targetPath) {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    return res.sendFile(targetPath);
+  }
+  res.status(404).json({ error: 'Investor Briefing Packet not found' });
+});
+
 // Full study state (sessions, participants, config)
 app.get('/api/study', (_req, res) => {
   const data = readDb();

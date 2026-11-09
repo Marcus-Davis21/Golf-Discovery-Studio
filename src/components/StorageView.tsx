@@ -213,6 +213,73 @@ export const StorageView: React.FC<StorageViewProps> = ({
 
   return (
     <div className="space-y-4">
+      {/* Archive Access & Credentials Guide Card */}
+      <div className="border border-emerald-200/80 rounded-2xl p-4 bg-linear-to-br from-emerald-50/50 to-white shadow-xs">
+        <div className="flex items-start justify-between gap-3 mb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 leading-tight">
+                Archive Access, Credentials & Capacity
+              </h3>
+              <p className="text-[11px] text-slate-600">
+                System identity for <code className="px-1 py-0.5 rounded bg-emerald-100/70 font-mono text-[10px] text-emerald-900 font-bold">research-archive@golfdiscovery.org</code>
+              </p>
+            </div>
+          </div>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
+            Internal Studio Store
+          </span>
+        </div>
+
+        <div className="text-xs text-slate-600 space-y-2 mt-2 leading-relaxed">
+          <p>
+            <strong className="text-slate-800">Access & Login Model:</strong> In <strong>Golf Discovery Studio</strong>, <code className="px-1 py-0.2 bg-slate-100 rounded text-slate-800 font-mono text-[11px]">research-archive@golfdiscovery.org</code> is the application&apos;s internal study routing identifier. It is <strong>not</strong> an external third-party webmail account requiring an external password—all data is stored and managed securely inside this studio.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
+            <div className="p-2 rounded-xl bg-white border border-emerald-100 shadow-2xs">
+              <span className="text-slate-400 block font-bold text-[9px] uppercase">1. Direct UI Access</span>
+              <span className="text-slate-800 font-semibold block mt-0.5">Zero-Password Studio Access</span>
+              <span className="text-slate-500 text-[10px]">View all sessions, transcripts, and notes across all 5 cohorts directly in the Hub &amp; Dashboard tabs.</span>
+            </div>
+            <div className="p-2 rounded-xl bg-white border border-emerald-100 shadow-2xs">
+              <span className="text-slate-400 block font-bold text-[9px] uppercase">2. Route to Personal Email</span>
+              <span className="text-slate-800 font-semibold block mt-0.5">1-Click Retargeting</span>
+              <span className="text-slate-500 text-[10px]">Change the primary email to <code className="text-emerald-700 font-mono">mlfdavis42@gmail.com</code> below to receive direct interview digests.</span>
+            </div>
+            <div className="p-2 rounded-xl bg-white border border-emerald-100 shadow-2xs">
+              <span className="text-slate-400 block font-bold text-[9px] uppercase">3. Live REST API Access</span>
+              <span className="text-slate-800 font-semibold block mt-0.5">Direct Database Dump</span>
+              <a
+                href="/api/study"
+                target="_blank"
+                rel="noreferrer"
+                className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1 text-[10px] mt-0.5 underline"
+              >
+                <span>Open /api/study JSON</span>
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-emerald-800 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-2">
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-200 block">
+                Storage Capacity to Fit the Build
+              </span>
+              <span className="text-xs font-semibold">
+                10+ GB Available Server Disk Storage · 5,000+ Interview Capacity (Baseline: 125)
+              </span>
+            </div>
+            <span className="text-[10px] px-2 py-1 rounded bg-emerald-700/80 font-mono shrink-0">
+              Database: ./data/study_store.json
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Target Storage Email Card */}
       <div className="border border-slate-200 rounded-2xl p-4 bg-white shadow-xs">
         <div className="flex items-center justify-between mb-2">
@@ -252,9 +319,16 @@ export const StorageView: React.FC<StorageViewProps> = ({
                 Storage Target
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 mt-1">
-              Video & voice interview archives can be dispatched directly to this email address.
-            </p>
+            <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">
+              <span>All transcripts, codes, and study sessions are routed to this destination.</span>
+              <button
+                type="button"
+                onClick={() => setEmailInput('mlfdavis42@gmail.com')}
+                className="text-emerald-700 hover:text-emerald-800 font-semibold underline cursor-pointer"
+              >
+                Set to mlfdavis42@gmail.com
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2">

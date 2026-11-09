@@ -1,5 +1,5 @@
 {
-  "summary": "Official Product Requirements Document (PRD) approved by the Project Management Team and certified by the Lead Computer Scientist. Contains full build details, multi-cohort sampling methodology, 76 non-leading questions, Cloud AI qualitative extraction pipeline, mobile/laptop ergonomics, dual persistence, and stakeholder validation sign-offs.",
-  "updatedAt": "2026-11-04T17:43:00.899898885Z",
-  "userFacing": true
+  "summary":  "Updated Product Requirements Document (PRD) documenting the final accepted version of Golf Discovery Studio (per Golf_Discovery_Studio__100184431__38ea1ddf.pdf). Features reconciled eligibility boundaries (10-20 target vs 10-22 study inclusion), verified screening metrics (Table 1: 75% recurring problem, 80% active attempt, 65% routine fit), 87.5% categorized aid abandonment, full BOM breakdown ($38.50 direct manufacturing, $44.70 landed COGS), 80.8% margin, and Executive Director sign-off. Zero CAD references.",
+  "updatedAt":  "2026-11-09T19:25:44.735060808Z",
+  "userFacing":  true
 }

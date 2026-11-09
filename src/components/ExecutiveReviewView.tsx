@@ -29,10 +29,11 @@ import {
 } from 'lucide-react';
 
 export const ExecutiveReviewView: React.FC = () => {
-  const [activeSubView, setActiveSubView] = useState<'reconciliations' | 'matrix' | 'codebook' | 'investment' | 'full_report'>('reconciliations');
+  const [activeSubView, setActiveSubView] = useState<'reconciliations' | 'matrix' | 'codebook' | 'investment' | 'investor_briefing' | 'full_report'>('reconciliations');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSetting, setFilterSetting] = useState<string>('all');
   const [copiedText, setCopiedText] = useState(false);
+  const [copiedBriefing, setCopiedBriefing] = useState(false);
 
   // Filtered participants
   const filteredParticipants = useMemo(() => {
@@ -65,6 +66,15 @@ export const ExecutiveReviewView: React.FC = () => {
     }
   };
 
+  const copyBriefingText = () => {
+    const el = document.getElementById('investor-briefing-content');
+    if (el) {
+      navigator.clipboard.writeText(el.innerText);
+      setCopiedBriefing(true);
+      setTimeout(() => setCopiedBriefing(false), 2000);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Banner: Executive Director Review Status & Certification */}
@@ -74,7 +84,7 @@ export const ExecutiveReviewView: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Appendix C Editorial Reconciliations Complete
+                Final Accepted Version (100184431)
               </span>
               <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5" />
@@ -89,7 +99,7 @@ export const ExecutiveReviewView: React.FC = () => {
               Executive Review: Customer Discovery Report & Funding Proposal
             </h1>
             <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
-              Reconstructed according to the criteria from the Investors' Executive Assistant (PhD in Technical Writing). Reconciles handicap boundaries (10–22), supplies the standardized codebook, provides the complete participant-level coding matrix, harmonizes quotations, and delivers the mandated Investment-Specific Supplement for the $250,000 Seed Stage round.
+              Reconstructed according to the final accepted version from the Executive Director and Technical Writer. Reconciles handicap boundaries (10–22), documents the standardized codebook, provides the complete participant coding matrix, and delivers the Investor Communication Briefing Packet for different investor profiles.
             </p>
           </div>
 
@@ -104,32 +114,32 @@ export const ExecutiveReviewView: React.FC = () => {
               <span>Download Reconciled Report (.MD)</span>
             </a>
             <a
-              href="/api/download/investment-supplement"
-              download="INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md"
+              href="/api/download/investor-briefing"
+              download="INVESTOR_COMMUNICATION_BRIEFING_PACKET.md"
               className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-indigo-950/40 transition-all border border-indigo-400 cursor-pointer"
             >
-              <DollarSign className="w-4 h-4" />
-              <span>Download Investment Supplement (.MD)</span>
+              <FileCheck2 className="w-4 h-4" />
+              <span>Download Investor Briefing (.MD)</span>
             </a>
             <div className="flex items-center gap-2">
               <a
-                href="/assets/aistudio/Golf_Discovery_Studio_Executive_Review_891ded79.pdf"
+                href="/assets/aistudio/Golf_Discovery_Studio__100184431__38ea1ddf.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-medium text-xs flex items-center justify-center gap-1.5 border border-white/20 transition-all"
-                title="View original Executive Director Review PDF"
+                title="View Final Accepted PDF (Golf_Discovery_Studio__100184431__38ea1ddf.pdf)"
               >
-                <FileText className="w-3.5 h-3.5 text-amber-300" />
-                <span>Original PDF</span>
+                <FileText className="w-3.5 h-3.5 text-emerald-300" />
+                <span>Accepted PDF</span>
               </a>
               <a
-                href="/api/executive-report"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/api/download/investment-supplement"
+                download="INVESTMENT_SUPPLEMENT_GOLF_RESISTANCE.md"
                 className="flex-1 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-medium text-xs flex items-center justify-center gap-1.5 border border-white/20 transition-all"
+                title="Download Investment Supplement"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>View Raw</span>
+                <DollarSign className="w-3.5 h-3.5 text-amber-300" />
+                <span>Supplement</span>
               </a>
             </div>
           </div>
@@ -230,6 +240,22 @@ export const ExecutiveReviewView: React.FC = () => {
           <span>Investment-Specific Supplement ($250k)</span>
           <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 font-bold">
             BOM & Terms
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSubView('investor_briefing')}
+          className={`flex items-center gap-2 px-5 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeSubView === 'investor_briefing'
+              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <FileCheck2 className="w-4 h-4 text-indigo-600" />
+          <span>Investor Briefing Packet</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-100 text-indigo-800 font-bold">
+            Pitch Guide
           </span>
         </button>
 
@@ -707,6 +733,134 @@ export const ExecutiveReviewView: React.FC = () => {
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-[10px] font-bold uppercase text-slate-400">Batch 1 Net EBITDA</span>
                 <span className="text-base font-extrabold text-emerald-600 block mt-0.5">{INVESTMENT_SUPPLEMENT.projectedEbitdaBatch1}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUBVIEW: INVESTOR COMMUNICATION BRIEFING PACKET */}
+      {activeSubView === 'investor_briefing' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                  Stakeholder Pitch Protocol
+                </span>
+                <h3 className="text-lg font-extrabold text-slate-900 mt-1">
+                  Investor Communication Briefing Packet: Golf Resistance
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Standardized pitch tracks, elevator hooks, and diligence answers for Angels, VCs, and PGA Partners.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={copyBriefingText}
+                  className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  {copiedBriefing ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                  <span>{copiedBriefing ? 'Copied' : 'Copy Packet'}</span>
+                </button>
+                <a
+                  href="/api/download/investor-briefing"
+                  download="INVESTOR_COMMUNICATION_BRIEFING_PACKET.md"
+                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Briefing (.MD)</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Elevator Hooks */}
+            <div className="space-y-4" id="investor-briefing-content">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-400/30">
+                  The 30-Second Hook
+                </span>
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
+                  "Mid-handicap golfers are the most desperate, highest-spending cohort in sports, yet 87.5% of them abandon commercial swing aids within 60 days because of setup friction and unnatural stiffness. Meanwhile, 85% drown in launch monitor data without knowing how to physically fix their swing. <strong>Golf Resistance</strong> is a bag-portable, progressive elastic training aid that slips on in under 30 seconds and forces proper wrist angle and shaft lean during a 10-minute living room session. We are raising $250,000 in Seed Capital to manufacture our first 5,000 units at an 80.8% gross margin, breaking even at just 1,420 units."
+                </p>
+              </div>
+
+              {/* 3 Audience Pitch Tracks */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded">
+                      Track A: Angel / HNW Golfers
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-900">Personal Pain & The "Aid Graveyard"</h4>
+                  <ul className="text-[11px] text-slate-600 space-y-1.5 list-disc pl-3.5">
+                    <li>Anchor on their own garage full of discarded gadgets.</li>
+                    <li>Highlight sub-30 second setup and living room convenience.</li>
+                    <li>$219 price point is less than 2 private PGA coaching lessons.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-200/80 text-indigo-900 px-2 py-0.5 rounded">
+                      Track B: Venture Capital & Funds
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-900">Capital Efficiency & Downside Protection</h4>
+                  <ul className="text-[11px] text-slate-600 space-y-1.5 list-disc pl-3.5">
+                    <li>$250k seed fully funds production tooling + 5,000 units.</li>
+                    <li>80.8% gross margin ($44.70 landed COGS on $219 MSRP).</li>
+                    <li>100% capital break-even at 1,420 units (28.4% of batch).</li>
+                    <li>$1.045M gross revenue with $411.5k EBITDA on Batch 1.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded">
+                      Track C: PGA Coaches & Partners
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-900">The "Homework Adherence Multiplier"</h4>
+                  <ul className="text-[11px] text-slate-600 space-y-1.5 list-disc pl-3.5">
+                    <li>C01 confirmed student motor decay is #1 retention barrier.</li>
+                    <li>Progressive resistance allows natural release without bracing.</li>
+                    <li>250 seed kits backed by an automated $45 affiliate commission.</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Diligence FAQs */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 pt-3">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  Investor Due Diligence FAQ & Proofread Answers
+                </h4>
+
+                <div className="space-y-2 text-xs">
+                  <div className="p-3 bg-white rounded-lg border border-slate-200">
+                    <div className="font-bold text-slate-900">Q: Is 20 golfers too small a sample to validate a business?</div>
+                    <div className="text-slate-600 mt-1">
+                      A: Our 20-golfer discovery study was designed for qualitative problem discovery and workflow friction identification (Mom Test). We reached thematic saturation by interview 14. We do not claim population census stats; rather, we established that 80% actively purchased commercial aids and 87.5% abandoned them due to setup friction and discomfort. Commercial scale is addressed through our 1,420-unit break-even target.
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white rounded-lg border border-slate-200">
+                    <div className="font-bold text-slate-900">Q: Why did your protocol allow 10–22 handicap when your target market is 10–20?</div>
+                    <div className="text-slate-600 mt-1">
+                      A: Reconciled explicitly: our commercial target is 10–20 handicap golfers. The protocol included boundary testing up to 22 (specifically evaluating M18 at 21 HCP) to test whether setup friction diverged at the boundary. Both subgroups exhibited identical friction barriers and data-to-action issues.
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white rounded-lg border border-slate-200">
+                    <div className="font-bold text-slate-900">Q: Are you promising lower scores to customers?</div>
+                    <div className="text-slate-600 mt-1">
+                      A: No. We strictly distinguish between customer-reported experiences and clinical performance trials. Golf Resistance is validated as a convenient practice workflow that allows a golfer to execute 30 high-quality motor reps in under 10 minutes at home. On-course scoring outcomes will be evaluated during our 60-day PGA facility pilot.
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
