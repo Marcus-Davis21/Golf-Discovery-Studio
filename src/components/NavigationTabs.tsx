@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabType } from '../types';
-import { Users, Video, ClipboardCheck, Layers } from 'lucide-react';
+import { Users, Video, ClipboardCheck, Layers, Crosshair } from 'lucide-react';
 
 interface NavigationTabsProps {
   activeTab: TabType;
@@ -9,6 +9,7 @@ interface NavigationTabsProps {
   cohortCompletedCount: number;
   cohortTargetCount?: number;
   totalCompletedCount: number;
+  flightShotCount?: number;
 }
 
 export const NavigationTabs: React.FC<NavigationTabsProps> = ({
@@ -18,13 +19,17 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   cohortCompletedCount,
   cohortTargetCount = 25,
   totalCompletedCount,
+  flightShotCount = 0,
 }) => {
   const isPostInterviewActive =
     activeTab === 'post_interview' ||
     activeTab === 'transcribe' ||
     activeTab === 'dashboard' ||
     activeTab === 'storage' ||
-    activeTab === 'ord';
+    activeTab === 'ord' ||
+    activeTab === 'mid_market_validation' ||
+    activeTab === 'memorandum' ||
+    activeTab === 'executive_review';
 
   const tabs: {
     id: TabType;
@@ -32,7 +37,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     mobileLabel: string;
     icon: (isActive: boolean) => React.ReactNode;
     badge?: string | number;
-    badgeType?: 'rec' | 'quota' | 'count';
+    badgeType?: 'rec' | 'quota' | 'count' | 'sim';
   }[] = [
     {
       id: 'participants',
@@ -80,8 +85,8 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     },
     {
       id: 'post_interview',
-      label: 'Post-Interview Hub',
-      mobileLabel: 'Hub',
+      label: 'Hub 1 · Research',
+      mobileLabel: 'Hub 1',
       icon: (isActive) => (
         <Layers
           className={`w-5 h-5 sm:w-4 sm:h-4 transition-transform ${
@@ -92,12 +97,26 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       badge: totalCompletedCount > 0 ? totalCompletedCount : undefined,
       badgeType: 'count',
     },
+    {
+      id: 'flight_hub',
+      label: 'Hub 2 · Ball Sim',
+      mobileLabel: 'Hub 2',
+      icon: (isActive) => (
+        <Crosshair
+          className={`w-5 h-5 sm:w-4 sm:h-4 transition-transform ${
+            isActive ? 'text-emerald-700 scale-105' : 'text-slate-500'
+          }`}
+        />
+      ),
+      badge: flightShotCount > 0 ? flightShotCount : undefined,
+      badgeType: 'sim',
+    },
   ];
 
   return (
     <nav className="w-full border-b border-slate-200 bg-white sticky top-[69px] z-20 shadow-xs">
-      {/* 4 Equal-Width Tabs for Spacious, High-Visibility Mobile Navigation */}
-      <div className="grid grid-cols-4 w-full">
+      {/* 5 Equal-Width Tabs for Spacious, High-Visibility Mobile & Desktop Navigation */}
+      <div className="grid grid-cols-5 w-full">
         {tabs.map((t) => {
           const isActive =
             t.id === 'post_interview' ? isPostInterviewActive : activeTab === t.id;

@@ -38,6 +38,7 @@ interface TranscriberViewProps {
   activeCohortId?: CohortId;
   onUpdateSessionAnalysis: (sessionId: string, analysis: AIQualitativeAnalysis) => void;
   onNavigateToInterview?: () => void;
+  onSendVideoToFlightSim?: (videoUrl?: string, label?: string) => void;
 }
 
 export const TranscriberView: React.FC<TranscriberViewProps> = ({
@@ -49,6 +50,7 @@ export const TranscriberView: React.FC<TranscriberViewProps> = ({
   activeCohortId = 'aspiring',
   onUpdateSessionAnalysis,
   onNavigateToInterview,
+  onSendVideoToFlightSim,
 }) => {
   // Source Selection: 'current' | 'session' | 'upload'
   const [sourceMode, setSourceMode] = useState<'current' | 'session' | 'upload'>(
@@ -309,7 +311,24 @@ export const TranscriberView: React.FC<TranscriberViewProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {onSendVideoToFlightSim && (
+              <button
+                type="button"
+                onClick={() =>
+                  onSendVideoToFlightSim(
+                    effectiveMediaUrl,
+                    `${effectiveParticipant} (${effectiveCohortName})`
+                  )
+                }
+                className="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/40 transition-all cursor-pointer"
+              >
+                <Video className="w-3.5 h-3.5" />
+                <span>Send to Hub 2 Ball Sim</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+
             <button
               type="button"
               onClick={handleExecuteTranscriptionPipeline}

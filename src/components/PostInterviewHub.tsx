@@ -55,6 +55,9 @@ interface PostInterviewHubProps {
   onUpdateStorageConfig: (config: StorageConfig) => Promise<void> | void;
   onSyncNow: () => void;
   isSyncing: boolean;
+  // Hub 2 Flight Sim Bridge
+  onSendVideoToFlightSim?: (videoUrl?: string, label?: string) => void;
+  onNavigateToHub2?: () => void;
 }
 
 export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
@@ -80,6 +83,8 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
   onUpdateStorageConfig,
   onSyncNow,
   isSyncing,
+  onSendVideoToFlightSim,
+  onNavigateToHub2,
 }) => {
   const subTabs: {
     id: PostInterviewSubTab;
@@ -171,14 +176,25 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onNavigateToInterview}
-            className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 border border-white/20 transition-all cursor-pointer self-start sm:self-auto"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Live Interview</span>
-          </button>
+          <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+            {onNavigateToHub2 && (
+              <button
+                type="button"
+                onClick={onNavigateToHub2}
+                className="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 text-xs font-bold flex items-center justify-center gap-1.5 border border-emerald-400/40 transition-all cursor-pointer"
+              >
+                <span>Open Hub 2 · Ball Sim</span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onNavigateToInterview}
+              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 border border-white/20 transition-all cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Live Interview</span>
+            </button>
+          </div>
         </div>
 
         {/* Spacious 5-Tab Post-Interview Selector with Large Visible Icons */}
@@ -243,6 +259,7 @@ export const PostInterviewHub: React.FC<PostInterviewHubProps> = ({
             activeCohortId={activeCohortId}
             onUpdateSessionAnalysis={onUpdateSessionAnalysis}
             onNavigateToInterview={onNavigateToInterview}
+            onSendVideoToFlightSim={onSendVideoToFlightSim}
           />
         )}
 

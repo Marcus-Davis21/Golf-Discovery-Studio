@@ -14,6 +14,7 @@ export type TabType =
   | 'interview'
   | 'review'
   | 'post_interview'
+  | 'flight_hub'
   | 'transcribe'
   | 'dashboard'
   | 'storage'
@@ -170,4 +171,77 @@ export interface PMReviewSignOff {
   reviewedBy: string;
   reviewedDate: string;
   notes?: string;
+}
+
+// Hub 2: Golf Resistance Ball Discovery Studio Types (Google Stitch + Engineering MVP)
+export type ClubKey = 'driver' | 'wood3' | 'iron7' | 'wedge';
+
+export type DimpleProfileId =
+  | 'tour_332'
+  | 'low_drag_392'
+  | 'high_lift_318'
+  | 'resistance_flow_280';
+
+export interface FlightTrajectoryPoint {
+  x: number; // downrange yards
+  y: number; // altitude yards
+  z: number; // lateral yards (- draw / + fade)
+  t: number; // elapsed seconds
+}
+
+export interface AerodynamicMetrics {
+  dragCoeffCd: number;
+  liftCoeffCl: number;
+  reynoldsNumber: number;
+  spinFactorSp: number;
+  magnusLiftNewtons: number;
+  dragForceNewtons: number;
+  landingAngleDeg: number;
+  resistanceDeltaMph: number;
+  dimpleEfficiencyGainPct: number;
+}
+
+export interface FlightShotTelemetry {
+  id: string;
+  timestamp: number;
+  clubKey: ClubKey;
+  clubName: string;
+  clubSpeed: number;
+  ballSpeed: number;
+  smash: number;
+  launchAngle: number;
+  spinRate: number;
+  sideSpinAngle: number;
+  attackAngle: number;
+  swingResistanceLbs: number;
+  dimpleProfile: DimpleProfileId;
+  carry: number;
+  total: number;
+  apex: number;
+  apexTime: number;
+  lateralYds: number;
+  flightShape: string;
+  source: 'manual' | 'video_ai';
+  sourceLabel?: string;
+  aerodynamics: AerodynamicMetrics;
+  points: FlightTrajectoryPoint[];
+  color: string;
+}
+
+export interface VideoFlightExtraction {
+  detectedClub: ClubKey;
+  clubSpeedMph: number;
+  launchAngleDeg: number;
+  spinRateRpm: number;
+  sideSpinAngleDeg: number;
+  attackAngleDeg: number;
+  recommendedDimpleProfile: DimpleProfileId;
+  estimatedDimpleCount: number;
+  swingResistanceEffectSummary: string;
+  trajectoryObservation: string;
+  dimpleAerodynamicsObservation: string;
+  coachingFeedback: string[];
+  confidenceScore: number;
+  modelUsed: string;
+  analyzedAt: number;
 }

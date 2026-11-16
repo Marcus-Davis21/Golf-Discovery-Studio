@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Golf Discovery Studio - Mobile Flight Simulator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0F17;
+            color: #F3F4F6;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-mono-num {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(18, 26, 41, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-panel-interactive {
+            background: rgba(22, 32, 50, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 230, 153, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .glass-panel-interactive:active {
+            border-color: rgba(0, 230, 153, 0.6);
+            transform: scale(0.99);
+        }
+
+        /* Custom range slider thumb styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00E699;
+            box-shadow: 0 0 10px rgba(0, 230, 153, 0.6);
+            cursor: pointer;
+            border: 2px solid #0B0F17;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00E699;
+            box-shadow: 0 0 10px rgba(0, 230, 153, 0.6);
+            cursor: pointer;
+            border: 2px solid #0B0F17;
+        }
+
+        /* Pulse glowing animation */
+        @keyframes neonPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 230, 153, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(0, 230, 153, 0.8); }
+        }
+
+        .neon-glow-button {
+            animation: neonPulse 2.5s infinite;
+        }
+
+        /* Hide scrollbars for slick mobile horizontal view */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden pb-10">
+
+    <!-- TOP NAVBAR -->
+    <header class="glass-panel sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-400 flex items-center justify-center text-slate-950 font-black text-lg shadow-lg shadow-emerald-500/20">
+                G
+            </div>
+            <div>
+                <h1 class="text-xs font-bold tracking-tight text-white flex items-center gap-1.5">
+                    GOLF DISCOVERY STUDIO
+                    <span class="text-[9px] font-medium bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded border border-emerald-500/30">ITR-2</span>
+                </h1>
+                <p class="text-[10px] text-gray-400">Mobile Ball Flight Physics &amp; Telemetry</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <button id="soundToggleBtn" onclick="toggleAudio()" class="p-2 rounded-lg bg-slate-800/80 text-emerald-400 hover:bg-slate-700 transition-colors border border-emerald-500/20 flex items-center gap-1 text-xs font-semibold">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                <span id="soundStatus" class="hidden sm:inline">Sound ON</span>
+            </button>
+            <button onclick="resetAllData()" title="Reset All" class="p-2 rounded-lg bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors border border-white/10">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-md mx-auto px-3 pt-3 flex-1 flex flex-col gap-3">
+
+        <!-- CANVAS DISPLAY SECTION -->
+        <div class="relative w-full rounded-2xl glass-panel overflow-hidden border border-emerald-500/20 shadow-2xl flex flex-col">
+            <!-- View Mode Selector Bar & Live Status -->
+            <div class="px-3 py-2 bg-slate-950/60 border-b border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span id="simStateLabel" class="text-[11px] font-semibold text-emerald-400 tracking-wide uppercase">Ready for Swing</span>
+                </div>
+                
+                <div class="flex items-center bg-slate-900 p-0.5 rounded-lg border border-white/10">
+                    <button id="btnViewSide" onclick="setViewMode('side')" class="px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-500 text-slate-950 transition-all">
+                        Side View
+                    </button>
+                    <button id="btnViewTop" onclick="setViewMode('top')" class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-all">
+                        Top-Down Tracer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Wrapper -->
+            <div class="relative w-full h-[220px] bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+                <canvas id="flightCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+                
+                <!-- Overlay HUD Stats during animation -->
+                <div id="hudOverlay" class="absolute top-2 left-2 flex gap-1.5 pointer-events-none text-[10px] font-mono-num">
+                    <div class="bg-slate-950/80 border border-emerald-500/30 px-1.5 py-0.5 rounded text-emerald-400">
+                        Dist: <span id="hudDistance">0.0</span> yds
+                    </div>
+                    <div class="bg-slate-950/80 border border-cyan-500/30 px-1.5 py-0.5 rounded text-cyan-400">
+                        H: <span id="hudHeight">0.0</span> yds
+                    </div>
+                    <div class="bg-slate-950/80 border border-purple-500/30 px-1.5 py-0.5 rounded text-purple-300">
+                        T: <span id="hudTime">0.0</span>s
+                    </div>
+                </div>
+
+                <!-- Canvas Visual Legend -->
+                <div class="absolute bottom-2 right-2 pointer-events-none text-[9px] text-slate-400 bg-slate-950/60 px-2 py-0.5 rounded border border-white/5">
+                    <span id="canvasLegendText">Grid: 50yd / 20yd (Side Elevation)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAUNCH MONITOR DISPLAY GRID -->
+        <div class="grid grid-cols-2 gap-2">
+            <!-- Club Speed -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Club Speed</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricClubSpeed" class="text-xl font-extrabold font-mono-num text-white">105.0</span>
+                    <span class="text-[10px] text-slate-400">mph</span>
+                </div>
+            </div>
+
+            <!-- Ball Speed -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Ball Speed</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricBallSpeed" class="text-xl font-extrabold font-mono-num text-emerald-400">155.4</span>
+                    <span class="text-[10px] text-slate-400">mph</span>
+                </div>
+            </div>
+
+            <!-- Smash Factor -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Smash Factor</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricSmash" class="text-xl font-extrabold font-mono-num text-cyan-400">1.48</span>
+                    <span class="text-[10px] text-slate-400">ratio</span>
+                </div>
+            </div>
+
+            <!-- Launch Angle -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Launch Angle</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricLaunchAngle" class="text-xl font-extrabold font-mono-num text-white">13.5</span>
+                    <span class="text-[10px] text-slate-400">deg</span>
+                </div>
+            </div>
+
+            <!-- Spin Rate -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Spin Rate</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricSpinRate" class="text-xl font-extrabold font-mono-num text-indigo-300">2650</span>
+                    <span class="text-[10px] text-slate-400">rpm</span>
+                </div>
+            </div>
+
+            <!-- Flight Shape / Curve -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Shot Shape</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricFlightShape" class="text-base font-bold font-mono-num text-amber-400">Tight Draw</span>
+                </div>
+            </div>
+
+            <!-- Carry Distance -->
+            <div class="glass-panel p-2.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-emerald-400 block">Carry</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricCarry" class="text-2xl font-black font-mono-num text-emerald-400">268.4</span>
+                    <span class="text-[10px] text-emerald-500">yds</span>
+                </div>
+            </div>
+
+            <!-- Total Distance -->
+            <div class="glass-panel p-2.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-cyan-400 block">Total Dist</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricTotal" class="text-2xl font-black font-mono-num text-cyan-400">286.1</span>
+                    <span class="text-[10px] text-cyan-500">yds</span>
+                </div>
+            </div>
+
+            <!-- Max Height (Apex) -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Apex Height</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricApex" class="text-xl font-extrabold font-mono-num text-purple-300">32.8</span>
+                    <span class="text-[10px] text-slate-400">yds</span>
+                </div>
+            </div>
+
+            <!-- Apex Time -->
+            <div class="glass-panel p-2.5 rounded-xl border border-white/5">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Apex Time</span>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <span id="metricApexTime" class="text-xl font-extrabold font-mono-num text-white">2.9</span>
+                    <span class="text-[10px] text-slate-400">sec</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL PANEL & ADJUSTMENTS -->
+        <div class="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col gap-3">
+            
+            <!-- Club Selection Bar -->
+            <div>
+                <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5 block">Select Golf Club</label>
+                <div class="grid grid-cols-4 gap-1.5">
+                    <button onclick="setClub('driver')" id="club-driver" class="club-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-slate-950 shadow border border-emerald-400">
+                        Driver
+                    </button>
+                    <button onclick="setClub('wood3')" id="club-wood3" class="club-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-white/10 hover:border-white/30">
+                        3-Wood
+                    </button>
+                    <button onclick="setClub('iron7')" id="club-iron7" class="club-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-white/10 hover:border-white/30">
+                        7-Iron
+                    </button>
+                    <button onclick="setClub('wedge')" id="club-wedge" class="club-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-white/10 hover:border-white/30">
+                        P-Wedge
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Sliders -->
+            <div class="space-y-2.5 bg-slate-950/40 p-3 rounded-xl border border-white/5">
+                <!-- Club Speed Slider -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-300 font-medium">Club Speed</span>
+                        <span id="sliderClubSpeedVal" class="font-mono-num font-bold text-emerald-400">105 mph</span>
+                    </div>
+                    <input type="range" id="inputClubSpeed" min="60" max="125" step="1" value="105" oninput="updateControls()">
+                </div>
+
+                <!-- Launch Angle Slider -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-300 font-medium">Launch Angle</span>
+                        <span id="sliderLaunchAngleVal" class="font-mono-num font-bold text-emerald-400">13.5°</span>
+                    </div>
+                    <input type="range" id="inputLaunchAngle" min="6" max="32" step="0.5" value="13.5" oninput="updateControls()">
+                </div>
+
+                <!-- Clubface / Side Spin Slider -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-300 font-medium">Face Angle / Curve (Side Spin)</span>
+                        <span id="sliderSideSpinVal" class="font-mono-num font-bold text-amber-400">-3.0° (Draw)</span>
+                    </div>
+                    <input type="range" id="inputSideSpin" min="-12" max="12" step="0.5" value="-3" oninput="updateControls()">
+                    <div class="flex justify-between text-[9px] text-slate-500 mt-0.5">
+                        <span>Hook / Draw (-)</span>
+                        <span>Straight (0)</span>
+                        <span>Slice / Fade (+)</span>
+                    </div>
+                </div>
+
+                <!-- Attack Angle Slider -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-300 font-medium">Attack Angle</span>
+                        <span id="sliderAttackAngleVal" class="font-mono-num font-bold text-cyan-400">+2.5°</span>
+                    </div>
+                    <input type="range" id="inputAttackAngle" min="-6" max="6" step="0.5" value="2.5" oninput="updateControls()">
+                </div>
+            </div>
+
+            <!-- MAIN ACTION BUTTONS -->
+            <div class="flex gap-2">
+                <button onclick="triggerSwing()" id="btnSwing" class="flex-1 py-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all neon-glow-button flex items-center justify-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4 fill-slate-950"></i>
+                    SWING NOW
+                </button>
+                <button onclick="clearTraces()" title="Clear Visual Traces" class="px-3.5 py-3 bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-white/10 flex items-center justify-center active:scale-95">
+                    <i data-lucide="eraser" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SHOT HISTORY LOG -->
+        <div class="glass-panel rounded-2xl border border-white/10 p-3 overflow-hidden">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="list" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    Shot History Telemetry
+                </h2>
+                <button onclick="clearShotLog()" class="text-[10px] text-slate-400 hover:text-rose-400 transition-colors">Clear Log</button>
+            </div>
+
+            <div class="overflow-x-auto no-scrollbar">
+                <table class="w-full text-left text-[10px]">
+                    <thead class="bg-slate-950/60 text-slate-400 font-semibold border-b border-white/5 font-mono-num">
+                        <tr>
+                            <th class="py-1.5 px-2">#</th>
+                            <th class="py-1.5 px-2">Club</th>
+                            <th class="py-1.5 px-2">Speed</th>
+                            <th class="py-1.5 px-2">Carry</th>
+                            <th class="py-1.5 px-2">Total</th>
+                            <th class="py-1.5 px-2">Apex</th>
+                            <th class="py-1.5 px-2">Shape</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shotLogBody" class="divide-y divide-white/5 font-mono-num">
+                        <!-- Dynamic rows inserted here -->
+                        <tr class="text-slate-500 text-center">
+                            <td colspan="7" class="py-3">No swings recorded yet. Tap SWING to test.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT SIMULATION LOGIC -->
+    <script>
+        // --- Club Physics Definitions ---
+        const CLUBS = {
+            driver: { name: 'Driver', baseLoft: 10.5, smashRatio: 1.48, spinMult: 200, color: '#00E699' },
+            wood3:  { name: '3-Wood', baseLoft: 15.0, smashRatio: 1.44, spinMult: 260, color: '#00B8FF' },
+            iron7:  { name: '7-Iron', baseLoft: 32.0, smashRatio: 1.33, spinMult: 450, color: '#A855F7' },
+            wedge:  { name: 'P-Wedge', baseLoft: 45.0, smashRatio: 1.22, spinMult: 650, color: '#F59E0B' }
+        };
+
+        let selectedClubKey = 'driver';
+        let viewMode = 'side'; // 'side' or 'top'
+        let audioEnabled = true;
+        let shotHistory = [];
+
+        // Dynamic State Parameters
+        let clubSpeed = 105;
+        let launchAngle = 13.5;
+        let sideSpinAngle = -3.0; // Negative = Draw, Positive = Fade
+        let attackAngle = 2.5;
+
+        // Canvas & Animation Variables
+        const canvas = document.getElementById('flightCanvas');
+        const ctx = canvas.getContext('2d');
+        let isAnimating = false;
+        let animationFrameId = null;
+        let currentTrajectory = [];
+        let completedTraces = [];
+
+        // Audio Context (Web Audio API Synth)
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+        }
+
+        function playImpactSound(speed) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                if (!audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                const baseFreq = 180 + (speed * 1.5);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.12);
+
+                gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.12);
+            } catch(e) {
+                console.warn("Audio play prevented", e);
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const soundStatus = document.getElementById('soundStatus');
+            const soundToggleBtn = document.getElementById('soundToggleBtn');
+
+            if (audioEnabled) {
+                if (soundStatus) soundStatus.innerText = 'Sound ON';
+                soundToggleBtn.classList.replace('text-slate-500', 'text-emerald-400');
+            } else {
+                if (soundStatus) soundStatus.innerText = 'Sound OFF';
+                soundToggleBtn.classList.replace('text-emerald-400', 'text-slate-500');
+            }
+        }
+
+        // --- Canvas Setup & Scaling ---
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+            drawScene();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // --- Ball Flight Physics Simulation Calculations ---
+        function calculateShotData() {
+            const club = CLUBS[selectedClubKey];
+            const smash = club.smashRatio;
+            const ballSpeedMph = clubSpeed * smash;
+            
+            const radAngle = (launchAngle * Math.PI) / 180;
+            const spinRateRpm = Math.max(1000, Math.round((launchAngle * club.spinMult) - (attackAngle * 100) + (clubSpeed * 10)));
+
+            const v0 = ballSpeedMph * 0.85; 
+            const vx0 = v0 * Math.cos(radAngle);
+            const vy0 = v0 * Math.sin(radAngle);
+            const vz0 = sideSpinAngle * 2.2; 
+
+            const dt = 0.05;
+            let t = 0;
+            let x = 0;
+            let y = 0;
+            let z = 0;
+
+            let vx = vx0;
+            let vy = vy0;
+            let vz = vz0;
+
+            const g = 9.81 * 0.4;
+            const drag = 0.0018;
+            const lift = 0.0012 + (spinRateRpm / 1500000);
+
+            const points = [];
+            let apexY = 0;
+            let apexTime = 0;
+
+            while (y >= 0 || t === 0) {
+                points.push({ x, y, z, t });
+
+                if (y > apexY) {
+                    apexY = y;
+                    apexTime = t;
+                }
+
+                const vTotal = Math.sqrt(vx*vx + vy*vy + vz*vz);
+                const ax = -drag * vTotal * vx;
+                const ay = -g - (drag * vTotal * vy) + (lift * vx * vx); 
+                const az = (vz0 * 0.08) + (sideSpinAngle * 0.05);
+
+                x += vx * dt;
+                y += vy * dt;
+                z += vz * dt;
+
+                vx += ax * dt;
+                vy += ay * dt;
+                vz += az * dt;
+
+                t += dt;
+
+                if (t > 15) break;
+            }
+
+            const carryYds = Math.max(0, x);
+            const rollYds = Math.max(2, (300 - spinRateRpm / 20) * 0.05);
+            const totalYds = carryYds + Math.max(0, rollYds);
+
+            let flightShape = 'Straight';
+            if (sideSpinAngle < -1.5) flightShape = sideSpinAngle < -5 ? 'Heavy Hook' : 'Tight Draw';
+            else if (sideSpinAngle > 1.5) flightShape = sideSpinAngle > 5 ? 'Heavy Slice' : 'Fade';
+
+            return {
+                clubSpeed,
+                ballSpeed: ballSpeedMph,
+                smash,
+                launchAngle,
+                spinRate: spinRateRpm,
+                carry: carryYds,
+                total: totalYds,
+                apex: apexY,
+                apexTime,
+                flightShape,
+                points
+            };
+        }
+
+        function setClub(key) {
+            selectedClubKey = key;
+            const club = CLUBS[key];
+
+            launchAngle = club.baseLoft;
+            document.getElementById('inputLaunchAngle').value = launchAngle;
+
+            document.querySelectorAll('.club-btn').forEach(btn => {
+                btn.className = 'club-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-white/10 hover:border-white/30';
+            });
+            const activeBtn = document.getElementById(`club-${key}`);
+            if (activeBtn) {
+                activeBtn.className = 'club-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-slate-950 shadow border border-emerald-400';
+            }
+
+            updateControls();
+        }
+
+        function updateControls() {
+            clubSpeed = parseFloat(document.getElementById('inputClubSpeed').value);
+            launchAngle = parseFloat(document.getElementById('inputLaunchAngle').value);
+            sideSpinAngle = parseFloat(document.getElementById('inputSideSpin').value);
+            attackAngle = parseFloat(document.getElementById('inputAttackAngle').value);
+
+            document.getElementById('sliderClubSpeedVal').innerText = `${clubSpeed} mph`;
+            document.getElementById('sliderLaunchAngleVal').innerText = `${launchAngle.toFixed(1)}°`;
+            
+            let sideText = 'Straight (0°)';
+            if (sideSpinAngle < 0) sideText = `${Math.abs(sideSpinAngle).toFixed(1)}° (Draw)`;
+            if (sideSpinAngle > 0) sideText = `${sideSpinAngle.toFixed(1)}° (Fade)`;
+            document.getElementById('sliderSideSpinVal').innerText = sideText;
+
+            const atkSign = attackAngle > 0 ? '+' : '';
+            document.getElementById('sliderAttackAngleVal').innerText = `${atkSign}${attackAngle.toFixed(1)}°`;
+
+            const data = calculateShotData();
+            updateMetricHUD(data);
+            if (!isAnimating) drawScene();
+        }
+
+        function updateMetricHUD(data) {
+            document.getElementById('metricClubSpeed').innerText = data.clubSpeed.toFixed(1);
+            document.getElementById('metricBallSpeed').innerText = data.ballSpeed.toFixed(1);
+            document.getElementById('metricSmash').innerText = data.smash.toFixed(2);
+            document.getElementById('metricLaunchAngle').innerText = data.launchAngle.toFixed(1);
+            document.getElementById('metricSpinRate').innerText = data.spinRate;
+            document.getElementById('metricCarry').innerText = data.carry.toFixed(1);
+            document.getElementById('metricTotal').innerText = data.total.toFixed(1);
+            document.getElementById('metricApex').innerText = data.apex.toFixed(1);
+            document.getElementById('metricApexTime').innerText = data.apexTime.toFixed(1);
+            document.getElementById('metricFlightShape').innerText = data.flightShape;
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            const btnSide = document.getElementById('btnViewSide');
+            const btnTop = document.getElementById('btnViewTop');
+            const legendText = document.getElementById('canvasLegendText');
+
+            if (mode === 'side') {
+                btnSide.className = 'px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-500 text-slate-950 transition-all';
+                btnTop.className = 'px-2.5 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-all';
+                legendText.innerText = 'Grid: 50yd / 20yd (Side Elevation)';
+            } else {
+                btnTop.className = 'px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-500 text-slate-950 transition-all';
+                btnSide.className = 'px-2.5 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-all';
+                legendText.innerText = 'Grid: 50yd / 10yd Lateral (Top-Down Tracer)';
+            }
+            drawScene();
+        }
+
+        function drawScene() {
+            const rect = canvas.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+            if (w === 0 || h === 0) return;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const padLeft = 32;
+            const padBottom = 22;
+            const drawW = w - padLeft - 12;
+            const drawH = h - padBottom - 12;
+
+            const maxX = 350;
+            const maxY = 60;
+            const maxZ = 30;
+
+            const mapX = (xYds) => padLeft + (xYds / maxX) * drawW;
+            const mapY = (yYds) => (h - padBottom) - (yYds / maxY) * drawH;
+            const mapZ = (zYds) => (h / 2) + (zYds / maxZ) * (drawH / 2);
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#64748B';
+            ctx.font = '9px JetBrains Mono';
+
+            if (viewMode === 'side') {
+                ctx.beginPath();
+                ctx.moveTo(padLeft, h - padBottom);
+                ctx.lineTo(w - 10, h - padBottom);
+                ctx.strokeStyle = 'rgba(0, 230, 153, 0.3)';
+                ctx.stroke();
+
+                for (let x = 50; x <= maxX; x += 50) {
+                    const cx = mapX(x);
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+                    ctx.moveTo(cx, 10);
+                    ctx.lineTo(cx, h - padBottom);
+                    ctx.stroke();
+                    ctx.fillText(`${x}y`, cx - 8, h - 8);
+                }
+
+                for (let y = 20; y <= maxY; y += 20) {
+                    const cy = mapY(y);
+                    ctx.beginPath();
+                    ctx.moveTo(padLeft, cy);
+                    ctx.lineTo(w - 10, cy);
+                    ctx.stroke();
+                    ctx.fillText(`${y}y`, 5, cy + 3);
+                }
+            } else {
+                const centerY = mapZ(0);
+                ctx.beginPath();
+                ctx.moveTo(padLeft, centerY);
+                ctx.lineTo(w - 10, centerY);
+                ctx.strokeStyle = 'rgba(0, 230, 153, 0.2)';
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                for (let x = 50; x <= maxX; x += 50) {
+                    const cx = mapX(x);
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+                    ctx.moveTo(cx, 10);
+                    ctx.lineTo(cx, h - 10);
+                    ctx.stroke();
+                    ctx.fillText(`${x}y`, cx - 8, h - 8);
+                }
+
+                for (let z = -20; z <= 20; z += 10) {
+                    if (z === 0) continue;
+                    const cz = mapZ(z);
+                    ctx.beginPath();
+                    ctx.moveTo(padLeft, cz);
+                    ctx.lineTo(w - 10, cz);
+                    ctx.stroke();
+                    ctx.fillText(`${z > 0 ? 'R' : 'L'}${Math.abs(z)}y`, 5, cz + 3);
+                }
+            }
+
+            completedTraces.forEach(trace => {
+                ctx.beginPath();
+                ctx.strokeStyle = trace.color || 'rgba(100, 116, 139, 0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([2, 2]);
+
+                trace.points.forEach((pt, idx) => {
+                    const px = mapX(pt.x);
+                    const py = viewMode === 'side' ? mapY(pt.y) : mapZ(pt.z);
+                    if (idx === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                });
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            if (currentTrajectory.length > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = CLUBS[selectedClubKey].color;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = CLUBS[selectedClubKey].color;
+                ctx.shadowBlur = 8;
+
+                currentTrajectory.forEach((pt, idx) => {
+                    const px = mapX(pt.x);
+                    const py = viewMode === 'side' ? mapY(pt.y) : mapZ(pt.z);
+                    if (idx === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                });
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                const head = currentTrajectory[currentTrajectory.length - 1];
+                const headX = mapX(head.x);
+                const headY = viewMode === 'side' ? mapY(head.y) : mapZ(head.z);
+
+                ctx.beginPath();
+                ctx.arc(headX, headY, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.shadowColor = '#00E699';
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function triggerSwing() {
+            if (isAnimating) return;
+
+            const shotData = calculateShotData();
+            playImpactSound(shotData.clubSpeed);
+
+            isAnimating = true;
+            document.getElementById('simStateLabel').innerText = 'Ball In Flight...';
+            document.getElementById('simStateLabel').className = 'text-[11px] font-semibold text-amber-400 tracking-wide uppercase animate-pulse';
+
+            let pointIndex = 0;
+            currentTrajectory = [];
+
+            function animateStep() {
+                if (pointIndex < shotData.points.length) {
+                    const pt = shotData.points[pointIndex];
+                    currentTrajectory.push(pt);
+
+                    document.getElementById('hudDistance').innerText = pt.x.toFixed(1);
+                    document.getElementById('hudHeight').innerText = pt.y.toFixed(1);
+                    document.getElementById('hudTime').innerText = pt.t.toFixed(1);
+
+                    drawScene();
+                    pointIndex++;
+                    animationFrameId = requestAnimationFrame(animateStep);
+                } else {
+                    isAnimating = false;
+                    document.getElementById('simStateLabel').innerText = 'Ready for Swing';
+                    document.getElementById('simStateLabel').className = 'text-[11px] font-semibold text-emerald-400 tracking-wide uppercase';
+
+                    completedTraces.push({
+                        points: [...shotData.points],
+                        color: CLUBS[selectedClubKey].color
+                    });
+
+                    addShotToLog(shotData);
+                }
+            }
+
+            animateStep();
+        }
+
+        function addShotToLog(data) {
+            shotHistory.unshift(data);
+            const tbody = document.getElementById('shotLogBody');
+
+            if (shotHistory.length === 1) {
+                tbody.innerHTML = '';
+            }
+
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-900/50 transition-colors';
+            row.innerHTML = `
+                <td class="py-1.5 px-2 text-slate-400">#${shotHistory.length}</td>
+                <td class="py-1.5 px-2 font-semibold text-white">${CLUBS[selectedClubKey].name}</td>
+                <td class="py-1.5 px-2 text-slate-300">${data.clubSpeed.toFixed(0)} mph</td>
+                <td class="py-1.5 px-2 text-emerald-400 font-bold">${data.carry.toFixed(1)} yds</td>
+                <td class="py-1.5 px-2 text-cyan-400 font-bold">${data.total.toFixed(1)} yds</td>
+                <td class="py-1.5 px-2 text-purple-300">${data.apex.toFixed(1)} yds</td>
+                <td class="py-1.5 px-2 text-amber-300">${data.flightShape}</td>
+            `;
+
+            tbody.insertBefore(row, tbody.firstChild);
+        }
+
+        function clearTraces() {
+            completedTraces = [];
+            currentTrajectory = [];
+            drawScene();
+        }
+
+        function clearShotLog() {
+            shotHistory = [];
+            const tbody = document.getElementById('shotLogBody');
+            tbody.innerHTML = `
+                <tr class="text-slate-500 text-center">
+                    <td colspan="7" class="py-3">No swings recorded yet. Tap SWING to test.</td>
+                </tr>
+            `;
+        }
+
+        function resetAllData() {
+            clearTraces();
+            clearShotLog();
+            setClub('driver');
+            document.getElementById('inputClubSpeed').value = 105;
+            document.getElementById('inputLaunchAngle').value = 13.5;
+            document.getElementById('inputSideSpin').value = -3.0;
+            document.getElementById('inputAttackAngle').value = 2.5;
+            updateControls();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            setTimeout(() => {
+                resizeCanvas();
+                updateControls();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

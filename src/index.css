@@ -22,3 +22,57 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Hub 2: Golf Resistance Ball Discovery Studio Telemetry Styles */
+.font-mono-num {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.stitch-glass-panel {
+  background: rgba(18, 26, 41, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stitch-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  height: 6px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.stitch-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00E699;
+  box-shadow: 0 0 10px rgba(0, 230, 153, 0.6);
+  cursor: pointer;
+  border: 2px solid #0B0F17;
+}
+
+.stitch-range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #00E699;
+  box-shadow: 0 0 10px rgba(0, 230, 153, 0.6);
+  cursor: pointer;
+  border: 2px solid #0B0F17;
+}
+
+@keyframes stitchNeonPulse {
+  0%, 100% { box-shadow: 0 0 14px rgba(0, 230, 153, 0.35); }
+  50% { box-shadow: 0 0 24px rgba(0, 230, 153, 0.75); }
+}
+
+.stitch-neon-glow-btn {
+  animation: stitchNeonPulse 2.5s infinite;
+}

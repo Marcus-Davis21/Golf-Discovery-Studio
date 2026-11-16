@@ -9,6 +9,7 @@ import {
   QuestionResponse,
   RecordingMediaType,
   AIQualitativeAnalysis,
+  FlightShotTelemetry,
 } from './types';
 import {
   COHORTS_DATA,
@@ -22,6 +23,7 @@ import { ParticipantsView } from './components/ParticipantsView';
 import { InterviewView } from './components/InterviewView';
 import { ReviewView } from './components/ReviewView';
 import { PostInterviewHub } from './components/PostInterviewHub';
+import { BallFlightSimulatorHub } from './components/BallFlightSimulatorHub';
 import { TranscriberView } from './components/TranscriberView';
 import { DashboardView } from './components/DashboardView';
 import { StorageView } from './components/StorageView';
@@ -115,6 +117,18 @@ export default function App() {
 
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
+  // Hub 2: Ball Flight Simulator Shots & Hub 1 Video Handoff State
+  const [flightShots, setFlightShots] = useState<FlightShotTelemetry[]>(() => {
+    try {
+      const saved = localStorage.getItem('gdsFlightShots_v1');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [handoffVideoUrl, setHandoffVideoUrl] = useState<string | undefined>(undefined);
+  const [handoffVideoLabel, setHandoffVideoLabel] = useState<string | undefined>(undefined);
+
   // Sync with Backend Server on Initial Load
   useEffect(() => {
     async function loadFromServer() {
@@ -140,6 +154,14 @@ export default function App() {
           if (Array.isArray(data.sessions) && data.sessions.length > 0) {
             setSavedSessions(data.sessions);
             localStorage.setItem('gdsSavedSessions_v2', JSON.stringify(data.sessions));
+          }
+        }
+        const shotsRes = await fetch('/api/flight-shots');
+        if (shotsRes.ok) {
+          const shotsData = await shotsRes.json();
+          if (Array.isArray(shotsData) && shotsData.length > 0) {
+            setFlightShots(shotsData);
+            localStorage.setItem('gdsFlightShots_v1', JSON.stringify(shotsData));
           }
         }
       } catch (e) {
@@ -542,6 +564,42 @@ export default function App() {
     }
   };
 
+  // Hub 2 Flight Shot Persistence Handlers
+  const handleSaveFlightShot = async (shot: FlightShotTelemetry) => {
+    setFlightShots((prev) => {
+      const next = [shot, ...prev].slice(0, 200);
+      try {
+        localStorage.setItem('gdsFlightShots_v1', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    try {
+      await fetch('/api/flight-shots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(shot),
+      });
+    } catch (e) {
+      console.warn('Error saving flight shot', e);
+    }
+  };
+
+  const handleClearFlightShots = async () => {
+    setFlightShots([]);
+    try {
+      localStorage.removeItem('gdsFlightShots_v1');
+      await fetch('/api/flight-shots/clear', { method: 'POST' });
+    } catch (e) {
+      console.warn('Error clearing flight shots', e);
+    }
+  };
+
+  const handleSendVideoToFlightSim = (videoUrl?: string, label?: string) => {
+    setHandoffVideoUrl(videoUrl);
+    setHandoffVideoLabel(label);
+    setActiveTab('flight_hub');
+  };
+
   const activeCohortCompletedCount = savedSessions.filter((s) => s.cohortId === selectedCohortId).length;
 
   return (
@@ -563,7 +621,7 @@ export default function App() {
           activeCohortName={COHORTS_DATA[selectedCohortId].name}
         />
 
-        {/* Navigation Tabs — 4 Clean Spacious Tabs (Roster, Interview, Review, Post-Interview Hub) */}
+        {/* Navigation Tabs — 5 Clean Spacious Tabs (Roster, Interview, Review, Hub 1, Hub 2) */}
         <NavigationTabs
           activeTab={activeTab}
           onTabChange={handleTabChange}
@@ -571,6 +629,7 @@ export default function App() {
           cohortCompletedCount={activeCohortCompletedCount}
           cohortTargetCount={storageConfig.targetCountPerCohort || 25}
           totalCompletedCount={savedSessions.length}
+          flightShotCount={flightShots.length}
         />
 
         {/* Main Content Area */}
@@ -680,6 +739,25 @@ export default function App() {
               onUpdateStorageConfig={handleUpdateStorageConfig}
               onSyncNow={handleSyncNow}
               isSyncing={isSyncing}
+              onSendVideoToFlightSim={handleSendVideoToFlightSim}
+              onNavigateToHub2={() => setActiveTab('flight_hub')}
+            />
+          )}
+
+          {/* Tab 5: Hub 2 — Golf Resistance Ball Discovery Studio (Google Stitch + Video Telemetry + Aerodynamics MVP) */}
+          {activeTab === 'flight_hub' && (
+            <BallFlightSimulatorHub
+              savedSessions={savedSessions}
+              activeRecordingBlobUrl={mediaBlobUrl}
+              activeRecordingType={mediaType}
+              activeParticipantName={activeParticipant?.name}
+              activeCohortId={selectedCohortId}
+              handoffVideoUrl={handoffVideoUrl}
+              handoffVideoLabel={handoffVideoLabel}
+              onNavigateToHub1Transcriber={() => handleTabChange('transcribe')}
+              flightShots={flightShots}
+              onSaveFlightShot={handleSaveFlightShot}
+              onClearFlightShots={handleClearFlightShots}
             />
           )}
         </main>
