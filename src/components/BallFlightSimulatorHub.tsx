@@ -119,6 +119,7 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
   const [launchAngle, setLaunchAngle] = useState<number>(13.5);
   const [sideSpinAngle, setSideSpinAngle] = useState<number>(-3.0);
   const [attackAngle, setAttackAngle] = useState<number>(2.5);
+  const [spinRateOverride, setSpinRateOverride] = useState<number | undefined>(undefined);
 
   // --- Engineering Design MVP Aerodynamics & Golf Resistance Controls ---
   const [swingResistanceLbs, setSwingResistanceLbs] = useState<number>(1.25);
@@ -195,9 +196,15 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
         attackAngle,
         swingResistanceLbs,
         dimpleProfile,
+        spinRateOverride,
       }),
-    [selectedClubKey, clubSpeed, launchAngle, sideSpinAngle, attackAngle, swingResistanceLbs, dimpleProfile]
+    [selectedClubKey, clubSpeed, launchAngle, sideSpinAngle, attackAngle, swingResistanceLbs, dimpleProfile, spinRateOverride]
   );
+
+  const hangTimeSec =
+    currentPreview.points.length > 0
+      ? currentPreview.points[currentPreview.points.length - 1].t
+      : currentPreview.apexTime * 2;
 
   // Keep latest render parameters in a ref so drawScene identity never churns and never kills rAF
   const sceneStateRef = useRef({
@@ -453,6 +460,7 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
         attackAngle: number;
         swingResistanceLbs: number;
         dimpleProfile: DimpleProfileId;
+        spinRateOverride?: number;
         source: 'manual' | 'video_ai';
         sourceLabel: string;
         skipPersist?: boolean;
@@ -473,6 +481,10 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
         attackAngle: overrideParams?.attackAngle ?? attackAngle,
         swingResistanceLbs: overrideParams?.swingResistanceLbs ?? swingResistanceLbs,
         dimpleProfile: overrideParams?.dimpleProfile ?? dimpleProfile,
+        spinRateOverride:
+          overrideParams && 'spinRateOverride' in overrideParams
+            ? overrideParams.spinRateOverride
+            : spinRateOverride,
         source: overrideParams?.source ?? 'manual',
         sourceLabel: overrideParams?.sourceLabel,
       });
@@ -547,6 +559,7 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
       attackAngle,
       swingResistanceLbs,
       dimpleProfile,
+      spinRateOverride,
       playImpactSound,
       drawScene,
       onSaveFlightShot,
@@ -571,13 +584,20 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
     launchAngle: number;
     sideSpinAngle: number;
     attackAngle: number;
+    spinRateOverride?: number;
+    resistanceLbs?: number;
   }) => {
+    const nextResistance = preset.resistanceLbs !== undefined ? preset.resistanceLbs : swingResistanceLbs;
+    if (preset.resistanceLbs !== undefined) {
+      setSwingResistanceLbs(preset.resistanceLbs);
+    }
     setActivePresetId(preset.id);
     setSelectedClubKey(preset.clubKey);
     setClubSpeed(preset.clubSpeed);
     setLaunchAngle(preset.launchAngle);
     setSideSpinAngle(preset.sideSpinAngle);
     setAttackAngle(preset.attackAngle);
+    setSpinRateOverride(preset.spinRateOverride);
     showGhostPreviewRef.current = true;
 
     triggerSwing({
@@ -586,17 +606,19 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
       launchAngle: preset.launchAngle,
       sideSpinAngle: preset.sideSpinAngle,
       attackAngle: preset.attackAngle,
-      swingResistanceLbs,
+      swingResistanceLbs: nextResistance,
       dimpleProfile,
+      spinRateOverride: preset.spinRateOverride,
       source: 'manual',
     });
   };
 
-  // --- Club Selector (Matches Google Stitch Base Lofts) ---
+  // --- Club Selector (Matches Launch Monitor Angles) ---
   const handleSelectClub = (key: ClubKey) => {
     showGhostPreviewRef.current = true;
     setSelectedClubKey(key);
     setLaunchAngle(STITCH_CLUBS[key].baseLoft);
+    setSpinRateOverride(undefined);
   };
 
   // --- Clear & Reset (Stops active flight cleanly & wipes canvas traces) ---
@@ -623,6 +645,7 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
     setLaunchAngle(13.5);
     setSideSpinAngle(-3.0);
     setAttackAngle(2.5);
+    setSpinRateOverride(undefined);
     setSwingResistanceLbs(1.25);
     setDimpleProfile('tour_332');
     setVideoTelemetry(null);
@@ -942,9 +965,10 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
               <div className="flex items-center gap-1.5 flex-wrap">
                 {[
                   { id: 'driver_draw', label: 'Driver Draw', clubKey: 'driver' as ClubKey, clubSpeed: 105, launchAngle: 13.5, sideSpinAngle: -3.0, attackAngle: 2.5 },
-                  { id: 'wood3_low', label: '3-Wood Low', clubKey: 'wood3' as ClubKey, clubSpeed: 98, launchAngle: 15.0, sideSpinAngle: 0.0, attackAngle: -0.5 },
-                  { id: 'iron7_apex', label: '7-Iron Apex', clubKey: 'iron7' as ClubKey, clubSpeed: 86, launchAngle: 19.0, sideSpinAngle: -1.0, attackAngle: -3.5 },
-                  { id: 'wedge_spin', label: 'Wedge Spin', clubKey: 'wedge' as ClubKey, clubSpeed: 74, launchAngle: 28.5, sideSpinAngle: 0.5, attackAngle: -5.0 },
+                  { id: 'pdf_bench', label: '132mph Benchmark', clubKey: 'driver' as ClubKey, clubSpeed: 89.2, launchAngle: 14.0, sideSpinAngle: 0.0, attackAngle: 0.0, spinRateOverride: 3000, resistanceLbs: 0 },
+                  { id: 'wood3_low', label: '3-Wood Low', clubKey: 'wood3' as ClubKey, clubSpeed: 98, launchAngle: 14.5, sideSpinAngle: 0.0, attackAngle: -0.5 },
+                  { id: 'iron7_apex', label: '7-Iron Apex', clubKey: 'iron7' as ClubKey, clubSpeed: 90, launchAngle: 16.5, sideSpinAngle: -1.0, attackAngle: -3.5, spinRateOverride: 7097 },
+                  { id: 'wedge_spin', label: 'Wedge Spin', clubKey: 'wedge' as ClubKey, clubSpeed: 83.6, launchAngle: 24.2, sideSpinAngle: 0.5, attackAngle: -5.0, spinRateOverride: 9304 },
                 ].map((preset) => (
                   <button
                     key={preset.id}
@@ -1074,13 +1098,13 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
 
             <div className="stitch-glass-panel p-2.5 rounded-xl border border-white/5">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">
-                Apex Time
+                Hang Time
               </span>
               <div className="flex items-baseline gap-1 mt-0.5">
                 <span className="text-lg sm:text-xl font-extrabold font-mono-num text-white">
-                  {currentPreview.apexTime.toFixed(1)}
+                  {hangTimeSec.toFixed(1)}
                 </span>
-                <span className="text-[10px] text-slate-400">sec</span>
+                <span className="text-[10px] text-slate-400">sec (Apex {currentPreview.apexTime.toFixed(1)}s)</span>
               </div>
             </div>
           </div>
@@ -1369,7 +1393,10 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
                   max={125}
                   step={1}
                   value={clubSpeed}
-                  onChange={(e) => setClubSpeed(Number(e.target.value))}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setClubSpeed(Number(e.target.value));
+                  }}
                   className="stitch-range-slider"
                 />
               </div>
@@ -1385,7 +1412,10 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
                   max={32}
                   step={0.5}
                   value={launchAngle}
-                  onChange={(e) => setLaunchAngle(Number(e.target.value))}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setLaunchAngle(Number(e.target.value));
+                  }}
                   className="stitch-range-slider"
                 />
               </div>
@@ -1401,7 +1431,10 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
                   max={12}
                   step={0.5}
                   value={sideSpinAngle}
-                  onChange={(e) => setSideSpinAngle(Number(e.target.value))}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setSideSpinAngle(Number(e.target.value));
+                  }}
                   className="stitch-range-slider"
                 />
                 <div className="flex justify-between text-[9px] text-slate-500 mt-0.5">
@@ -1424,7 +1457,44 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
                   max={6}
                   step={0.5}
                   value={attackAngle}
-                  onChange={(e) => setAttackAngle(Number(e.target.value))}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setAttackAngle(Number(e.target.value));
+                  }}
+                  className="stitch-range-slider"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center text-xs mb-1">
+                  <span className="text-slate-300 font-medium">
+                    Backspin Rate {spinRateOverride !== undefined ? '(Manual)' : '(Auto)'}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono-num font-bold text-indigo-300">
+                      {currentPreview.spinRate} rpm
+                    </span>
+                    {spinRateOverride !== undefined && (
+                      <button
+                        type="button"
+                        onClick={() => setSpinRateOverride(undefined)}
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white border border-white/10 cursor-pointer"
+                      >
+                        Auto
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min={1200}
+                  max={10500}
+                  step={50}
+                  value={spinRateOverride ?? currentPreview.spinRate}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setSpinRateOverride(Number(e.target.value));
+                  }}
                   className="stitch-range-slider"
                 />
               </div>
