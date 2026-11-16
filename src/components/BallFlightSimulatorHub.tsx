@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import {
   ClubKey,
   DimpleProfileId,
+  StrikeQuality,
+  FairwayFirmness,
   FlightTrajectoryPoint,
   FlightShotTelemetry,
   VideoFlightExtraction,
@@ -12,6 +14,8 @@ import {
   STITCH_CLUBS,
   DIMPLE_PROFILES,
   calculateBallFlight,
+  calculateClubLengthFit,
+  calculateSwingWeight,
 } from '../utils/ballFlightPhysics';
 import {
   Volume2,
@@ -31,6 +35,8 @@ import {
   ArrowLeft,
   Crosshair,
   Activity,
+  Mountain,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 interface BallFlightSimulatorHubProps {
@@ -125,6 +131,21 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
   const [swingResistanceLbs, setSwingResistanceLbs] = useState<number>(1.25);
   const [dimpleProfile, setDimpleProfile] = useState<DimpleProfileId>('tour_332');
 
+  // --- Strike, Course Atmosphere & Terrain Controls (Wind, Altitude, Slope, Fairway) ---
+  const [strikeQuality, setStrikeQuality] = useState<StrikeQuality>('centered');
+  const [fairwayFirmness, setFairwayFirmness] = useState<FairwayFirmness>('normal');
+  const [windSpeedMph, setWindSpeedMph] = useState<number>(0);
+  const [windDirectionDeg, setWindDirectionDeg] = useState<number>(0);
+  const [altitudeFt, setAltitudeFt] = useState<number>(0);
+  const [slopeFt, setSlopeFt] = useState<number>(0);
+
+  // --- Pre-Impact Club Length & Swing Weight Calculator State ---
+  const [showFittingSpec, setShowFittingSpec] = useState<boolean>(false);
+  const [golferHeightIn, setGolferHeightIn] = useState<number>(70); // 5'10"
+  const [wristToFloorIn, setWristToFloorIn] = useState<number>(34);
+  const [clubMassGrams, setClubMassGrams] = useState<number>(425);
+  const [balancePointIn, setBalancePointIn] = useState<number>(28.5);
+
   // --- Video Telemetry AI Analysis State ---
   const [isAnalyzingVideo, setIsAnalyzingVideo] = useState<boolean>(false);
   const [videoTelemetry, setVideoTelemetry] = useState<VideoFlightExtraction | null>(null);
@@ -197,8 +218,48 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
         swingResistanceLbs,
         dimpleProfile,
         spinRateOverride,
+        strikeQuality,
+        fairwayFirmness,
+        windSpeedMph,
+        windDirectionDeg,
+        altitudeFt,
+        slopeFt,
       }),
-    [selectedClubKey, clubSpeed, launchAngle, sideSpinAngle, attackAngle, swingResistanceLbs, dimpleProfile, spinRateOverride]
+    [
+      selectedClubKey,
+      clubSpeed,
+      launchAngle,
+      sideSpinAngle,
+      attackAngle,
+      swingResistanceLbs,
+      dimpleProfile,
+      spinRateOverride,
+      strikeQuality,
+      fairwayFirmness,
+      windSpeedMph,
+      windDirectionDeg,
+      altitudeFt,
+      slopeFt,
+    ]
+  );
+
+  const clubFitInfo = useMemo(
+    () =>
+      calculateClubLengthFit({
+        clubKey: selectedClubKey,
+        heightIn: golferHeightIn,
+        wristToFloorIn,
+      }),
+    [selectedClubKey, golferHeightIn, wristToFloorIn]
+  );
+
+  const swingWeightInfo = useMemo(
+    () =>
+      calculateSwingWeight({
+        weightGrams: clubMassGrams,
+        balancePointIn,
+      }),
+    [clubMassGrams, balancePointIn]
   );
 
   const hangTimeSec =
@@ -211,11 +272,13 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
     viewMode,
     selectedClubKey,
     currentPreview,
+    slopeFt,
   });
   sceneStateRef.current = {
     viewMode,
     selectedClubKey,
     currentPreview,
+    slopeFt,
   };
 
   // --- Canvas Drawing Routine (Stable Identity — Reads Latest Refs) ---
@@ -230,7 +293,7 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const { viewMode: vm, selectedClubKey: clubKey, currentPreview: preview } = sceneStateRef.current;
+    const { viewMode: vm, selectedClubKey: clubKey, currentPreview: preview, slopeFt: activeSlopeFt } = sceneStateRef.current;
 
     ctx.clearRect(0, 0, w, h);
 
@@ -257,6 +320,19 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
       ctx.lineTo(w - 10, h - padBottom);
       ctx.strokeStyle = 'rgba(0, 230, 153, 0.35)';
       ctx.stroke();
+
+      // Target uphill/downhill landing plane indicator
+      if (activeSlopeFt !== 0) {
+        const slopeYds = activeSlopeFt / 3;
+        const targetYpx = Math.max(12, Math.min(h - 6, mapY(slopeYds)));
+        ctx.beginPath();
+        ctx.moveTo(padLeft, h - padBottom);
+        ctx.lineTo(w - 10, targetYpx);
+        ctx.strokeStyle = activeSlopeFt > 0 ? 'rgba(56, 189, 248, 0.55)' : 'rgba(245, 158, 11, 0.55)';
+        ctx.setLineDash([5, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
 
       for (let x = 50; x <= maxX; x += 50) {
         const cx = mapX(x);
@@ -485,6 +561,12 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
           overrideParams && 'spinRateOverride' in overrideParams
             ? overrideParams.spinRateOverride
             : spinRateOverride,
+        strikeQuality,
+        fairwayFirmness,
+        windSpeedMph,
+        windDirectionDeg,
+        altitudeFt,
+        slopeFt,
         source: overrideParams?.source ?? 'manual',
         sourceLabel: overrideParams?.sourceLabel,
       });
@@ -560,6 +642,12 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
       swingResistanceLbs,
       dimpleProfile,
       spinRateOverride,
+      strikeQuality,
+      fairwayFirmness,
+      windSpeedMph,
+      windDirectionDeg,
+      altitudeFt,
+      slopeFt,
       playImpactSound,
       drawScene,
       onSaveFlightShot,
@@ -648,6 +736,12 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
     setSpinRateOverride(undefined);
     setSwingResistanceLbs(1.25);
     setDimpleProfile('tour_332');
+    setStrikeQuality('centered');
+    setFairwayFirmness('normal');
+    setWindSpeedMph(0);
+    setWindDirectionDeg(0);
+    setAltitudeFt(0);
+    setSlopeFt(0);
     setVideoTelemetry(null);
     setTelemetryError(null);
   };
@@ -984,6 +1078,14 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Plain-Language 1:1 Display Scale Clarification Notice */}
+            <div className="px-3 py-2 bg-slate-900/90 border-t border-white/5 text-[11px] text-slate-300 leading-relaxed">
+              <strong className="text-cyan-300">Display Scale Note (vs. 1:1 Real-Life View):</strong>{' '}
+              In real life, a golf ball travels much farther forward than it flies high—so at an exact 1:1 scale, a 270-yard drive would look nearly flat on a screen. Just like pro launch monitors and TV shot tracers,{' '}
+              <span className="text-white font-semibold">Golf Resistance Ball Discovery Studio</span>{' '}
+              gently stretches the up-and-down height and side-to-side view so you can clearly see the ball launch, peak, and curve. All carry, total distance, apex height, hang time, and spin numbers shown below remain true real-world measurements.
             </div>
           </div>
 
@@ -1663,10 +1765,336 @@ export const BallFlightSimulatorHub: React.FC<BallFlightSimulatorHubProps> = ({
                 </span>
               </div>
             </div>
-            <div className="text-[10px] font-mono-num text-slate-400 flex items-center justify-between pt-1 border-t border-white/5">
-              <span>Reynolds: {(currentPreview.aerodynamics.reynoldsNumber / 1000).toFixed(1)}k Re</span>
+            <div className="text-[10px] font-mono-num text-slate-400 flex items-center justify-between pt-1 border-t border-white/5 flex-wrap gap-1">
+              <span>Re: {(currentPreview.aerodynamics.reynoldsNumber / 1000).toFixed(1)}k</span>
+              <span>Air ρ: {currentPreview.aerodynamics.airDensityKgM3.toFixed(3)} kg/m³</span>
               <span>Lateral: {currentPreview.lateralYds > 0 ? 'R' : 'L'}{Math.abs(currentPreview.lateralYds).toFixed(1)} yds</span>
             </div>
+          </div>
+
+          {/* 3. COURSE ATMOSPHERE, STRIKE QUALITY & PRE-IMPACT CLUB FIT (5-PDF Calibrated) */}
+          <div className="stitch-glass-panel p-3.5 rounded-2xl border border-cyan-500/20 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Mountain className="w-4 h-4 text-cyan-400 shrink-0" />
+                <div>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                    Environment, Strike &amp; Club Spec
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    3D Wind vector, ISA air density, slope plane &amp; fairway roll
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowFittingSpec(!showFittingSpec)}
+                className="text-[10px] font-semibold text-cyan-300 bg-cyan-950/50 hover:bg-cyan-900/50 px-2 py-1 rounded border border-cyan-500/30 cursor-pointer flex items-center gap-1"
+              >
+                <SlidersHorizontal className="w-3 h-3" />
+                <span>{showFittingSpec ? 'Hide Fit' : 'Club Fit / SW'}</span>
+              </button>
+            </div>
+
+            {/* Strike Quality & Fairway Firmness (Driver Calculator PDF Physics) */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-slate-950/50 p-2 rounded-xl border border-white/5">
+                <span className="text-[10px] text-slate-400 font-semibold block mb-1">Strike Quality</span>
+                <div className="grid grid-cols-3 gap-1">
+                  {(
+                    [
+                      { id: 'centered', label: 'Center' },
+                      { id: 'slightly_off', label: 'Off-Ctr' },
+                      { id: 'toe_heel', label: 'Toe/Heel' },
+                    ] as { id: StrikeQuality; label: string }[]
+                  ).map((sq) => (
+                    <button
+                      key={sq.id}
+                      type="button"
+                      onClick={() => {
+                        showGhostPreviewRef.current = true;
+                        setStrikeQuality(sq.id);
+                      }}
+                      className={`py-1 px-1 rounded text-[10px] font-semibold border cursor-pointer truncate ${
+                        strikeQuality === sq.id
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
+                          : 'bg-slate-900 text-slate-400 border-white/10'
+                      }`}
+                    >
+                      {sq.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-slate-950/50 p-2 rounded-xl border border-white/5">
+                <span className="text-[10px] text-slate-400 font-semibold block mb-1">Fairway Turf</span>
+                <div className="grid grid-cols-3 gap-1">
+                  {(
+                    [
+                      { id: 'soft', label: 'Soft' },
+                      { id: 'normal', label: 'Normal' },
+                      { id: 'firm', label: 'Firm' },
+                    ] as { id: FairwayFirmness; label: string }[]
+                  ).map((fw) => (
+                    <button
+                      key={fw.id}
+                      type="button"
+                      onClick={() => {
+                        showGhostPreviewRef.current = true;
+                        setFairwayFirmness(fw.id);
+                      }}
+                      className={`py-1 px-1 rounded text-[10px] font-semibold border cursor-pointer truncate ${
+                        fairwayFirmness === fw.id
+                          ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50'
+                          : 'bg-slate-900 text-slate-400 border-white/10'
+                      }`}
+                    >
+                      {fw.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 3D Relative Wind Speed & Direction */}
+            <div className="bg-slate-950/50 p-2.5 rounded-xl border border-white/5 space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-300 font-medium">Wind Speed &amp; Heading</span>
+                <span className="font-mono-num font-bold text-cyan-300">
+                  {windSpeedMph} mph ·{' '}
+                  {windDirectionDeg === 0
+                    ? 'Head'
+                    : windDirectionDeg === 180
+                    ? 'Tail'
+                    : windDirectionDeg === 90
+                    ? 'R→L Cross'
+                    : windDirectionDeg === 270
+                    ? 'L→R Cross'
+                    : `${windDirectionDeg}°`}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={30}
+                step={1}
+                value={windSpeedMph}
+                onChange={(e) => {
+                  showGhostPreviewRef.current = true;
+                  setWindSpeedMph(Number(e.target.value));
+                }}
+                className="stitch-range-slider"
+              />
+              <div className="grid grid-cols-5 gap-1">
+                {[
+                  { label: 'Head', deg: 0 },
+                  { label: '45° R', deg: 45 },
+                  { label: 'R→L', deg: 90 },
+                  { label: 'Tail', deg: 180 },
+                  { label: 'L→R', deg: 270 },
+                ].map((wDir) => (
+                  <button
+                    key={wDir.deg}
+                    type="button"
+                    onClick={() => {
+                      showGhostPreviewRef.current = true;
+                      setWindDirectionDeg(wDir.deg);
+                    }}
+                    className={`py-1 rounded text-[10px] font-semibold border cursor-pointer ${
+                      windDirectionDeg === wDir.deg
+                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50'
+                        : 'bg-slate-900 text-slate-400 border-white/10'
+                    }`}
+                  >
+                    {wDir.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Altitude (Air Density) & Target Slope Plane */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-slate-950/50 p-2.5 rounded-xl border border-white/5 space-y-1.5">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-slate-300 font-medium">Altitude</span>
+                  <span className="font-mono-num font-bold text-indigo-300">{altitudeFt} ft</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={8000}
+                  step={250}
+                  value={altitudeFt}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setAltitudeFt(Number(e.target.value));
+                  }}
+                  className="stitch-range-slider"
+                />
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showGhostPreviewRef.current = true;
+                      setAltitudeFt(0);
+                    }}
+                    className="flex-1 py-0.5 rounded bg-slate-900 text-[9px] text-slate-400 border border-white/10 cursor-pointer"
+                  >
+                    Sea Lvl
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showGhostPreviewRef.current = true;
+                      setAltitudeFt(5280);
+                    }}
+                    className="flex-1 py-0.5 rounded bg-slate-900 text-[9px] text-indigo-300 border border-indigo-500/30 cursor-pointer"
+                  >
+                    5,280 ft
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-slate-950/50 p-2.5 rounded-xl border border-white/5 space-y-1.5">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-slate-300 font-medium">Green Slope</span>
+                  <span className="font-mono-num font-bold text-amber-300">
+                    {slopeFt > 0 ? `+${slopeFt}` : slopeFt} ft
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={-45}
+                  max={45}
+                  step={5}
+                  value={slopeFt}
+                  onChange={(e) => {
+                    showGhostPreviewRef.current = true;
+                    setSlopeFt(Number(e.target.value));
+                  }}
+                  className="stitch-range-slider"
+                />
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showGhostPreviewRef.current = true;
+                      setSlopeFt(-20);
+                    }}
+                    className="flex-1 py-0.5 rounded bg-slate-900 text-[9px] text-amber-300 border border-amber-500/30 cursor-pointer"
+                  >
+                    -20ft Dn
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showGhostPreviewRef.current = true;
+                      setSlopeFt(0);
+                    }}
+                    className="flex-1 py-0.5 rounded bg-slate-900 text-[9px] text-slate-400 border border-white/10 cursor-pointer"
+                  >
+                    Flat
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showGhostPreviewRef.current = true;
+                      setSlopeFt(20);
+                    }}
+                    className="flex-1 py-0.5 rounded bg-slate-900 text-[9px] text-cyan-300 border border-cyan-500/30 cursor-pointer"
+                  >
+                    +20ft Up
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Optional Pre-Impact Club Length Fit & Swing Weight Calculator */}
+            {showFittingSpec && (
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-indigo-500/30 space-y-2.5 text-xs">
+                <div className="text-[10px] text-slate-400 leading-relaxed">
+                  Pre-impact diagnostics: Club length and swing weight govern posture, tempo, and strike quality before separation; flight trajectory is governed strictly by post-impact ball speed, spin, dimples, and atmosphere.
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-0.5">
+                      Golfer Height: {Math.floor(golferHeightIn / 12)}&apos;{golferHeightIn % 12}&quot; ({golferHeightIn}&quot;)
+                    </label>
+                    <input
+                      type="range"
+                      min={58}
+                      max={80}
+                      step={1}
+                      value={golferHeightIn}
+                      onChange={(e) => setGolferHeightIn(Number(e.target.value))}
+                      className="stitch-range-slider"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-0.5">
+                      Wrist-to-Floor: {wristToFloorIn}&quot;
+                    </label>
+                    <input
+                      type="range"
+                      min={26}
+                      max={43}
+                      step={0.5}
+                      value={wristToFloorIn}
+                      onChange={(e) => setWristToFloorIn(Number(e.target.value))}
+                      className="stitch-range-slider"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-0.5">
+                      Club Weight: {clubMassGrams} g ({swingWeightInfo.weightOz} oz)
+                    </label>
+                    <input
+                      type="range"
+                      min={290}
+                      max={480}
+                      step={5}
+                      value={clubMassGrams}
+                      onChange={(e) => setClubMassGrams(Number(e.target.value))}
+                      className="stitch-range-slider"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-0.5">
+                      Balance Point (14&quot; pivot): {balancePointIn.toFixed(1)}&quot;
+                    </label>
+                    <input
+                      type="range"
+                      min={24}
+                      max={34}
+                      step={0.5}
+                      value={balancePointIn}
+                      onChange={(e) => setBalancePointIn(Number(e.target.value))}
+                      className="stitch-range-slider"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 font-mono-num text-[11px]">
+                  <div className="bg-slate-900 p-2 rounded-lg">
+                    <span className="text-[9px] text-slate-400 block font-sans">Recommended {STITCH_CLUBS[selectedClubKey].name} Length</span>
+                    <span className="font-bold text-emerald-300">
+                      {clubFitInfo.fittedLengthIn}&quot; ({clubFitInfo.adjustmentIn >= 0 ? `+${clubFitInfo.adjustmentIn}` : clubFitInfo.adjustmentIn}&quot;)
+                    </span>
+                  </div>
+                  <div className="bg-slate-900 p-2 rounded-lg">
+                    <span className="text-[9px] text-slate-400 block font-sans">Swing Weight (14&quot; Scale)</span>
+                    <span className="font-bold text-amber-300">
+                      {swingWeightInfo.exactScale} ({swingWeightInfo.turningForceInOz} in-oz)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

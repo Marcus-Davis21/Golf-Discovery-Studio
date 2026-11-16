@@ -152,13 +152,13 @@ export const ORDView: React.FC<ORDViewProps> = () => {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-800 text-white px-2 py-0.5 rounded">
-                  PRD APPROVED · STAKEHOLDER READY
+                  PRD v3.1 APPROVED · AS-IS BASELINE
                 </span>
                 <span className="text-[10px] font-mono font-bold text-emerald-950 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
-                  DOC ID: PRD-GDS-2026-FINAL-APPROVED
+                  DOC ID: PRD-GDS-2026-V3.1-APPROVED
                 </span>
                 <span className="text-[10px] font-bold text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
-                  Rollout: Immediate Live Field Interviews
+                  Hub 1 Research + Hub 2 Ball Flight Sim
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-tight mt-1">
@@ -376,14 +376,14 @@ export const ORDView: React.FC<ORDViewProps> = () => {
                   STAKEHOLDER EDITION
                 </span>
                 <span className="text-[11px] text-slate-500 font-mono">
-                  Ref: PRD-GDS-2026-FINAL-APPROVED
+                  Ref: PRD-GDS-2026-V3.1-APPROVED
                 </span>
               </div>
               <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-0.5">
-                Product Requirements Document (PRD) — Stakeholder & Research Validation
+                Product Requirements Document (PRD v3.1) — Dual-Hub Research &amp; As-Is Flight Studio
               </h3>
               <p className="text-xs text-slate-500">
-                Authoritative reference document for Stakeholders, PM Leadership, and Scientific Authorities
+                Authoritative reference document for Stakeholders, PM Leadership, Engineering, and Scientific Authorities
               </p>
             </div>
             <button
@@ -406,23 +406,23 @@ export const ORDView: React.FC<ORDViewProps> = () => {
                 PRODUCT REQUIREMENTS DOCUMENT (PRD)
               </h1>
               <div className="text-sm font-semibold text-emerald-900">
-                Golf Discovery Studio — Stakeholder & Research Validation Specification
+                Golf Discovery Studio &amp; Golf Resistance Ball Discovery Studio — As-Is Specification v3.1
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-600 mt-2 pt-2 border-t border-slate-200">
-                <div><strong className="text-slate-800">Doc ID:</strong> PRD-GDS-2026-FINAL</div>
-                <div><strong className="text-slate-800">Status:</strong> Approved & Certified</div>
-                <div><strong className="text-slate-800">Date:</strong> November 4, 2026</div>
-                <div><strong className="text-slate-800">Target Rollout:</strong> Live Interviews</div>
+                <div><strong className="text-slate-800">Doc ID:</strong> PRD-GDS-2026-V3.1</div>
+                <div><strong className="text-slate-800">Status:</strong> Approved As-Is Baseline</div>
+                <div><strong className="text-slate-800">Date:</strong> November 16, 2026</div>
+                <div><strong className="text-slate-800">Scope:</strong> Hub 1 + Hub 2</div>
               </div>
             </div>
 
             {/* Section 1: Executive Summary */}
             <section className="space-y-1.5">
               <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
-                <span>1. Executive Summary & Product Vision</span>
+                <span>1. Executive Summary &amp; Dual-Hub Product Vision</span>
               </h2>
               <p>
-                <strong>Golf Discovery Studio</strong> is a specialized, production-ready qualitative research and customer discovery instrument designed to capture, transcribe, and synthesize empirical customer discovery data across golfers of all skill tiers. Following project management team directives, all demo wrappers and presentation simulations have been removed. The platform is ready for active field operation to conduct <strong>25 in-depth customer discovery interviews per cohort</strong> across <strong>5 distinct cohorts</strong> (125 baseline target) with an <strong>unlimited capacity architecture</strong>.
+                <strong>Golf Discovery Studio (v3.1)</strong> locks two production hubs: <strong>Hub 1 (Field Customer Discovery)</strong>, validated across <strong>N = 20 intermediate golfers (M01–M20)</strong> and <strong>2 expert audits (C01, C04)</strong> with 5-cohort capacity (25 per cohort baseline, unlimited scaling), and <strong>Hub 2 (Golf Resistance Ball Discovery Studio)</strong>, the approved as-is Google Stitch–derived 3D aerodynamic simulator powered by <code>gemini-4-hydrogen</code> multimodal video telemetry and a calibrated <code>dt = 0.01s</code> SI 3D ODE physics solver.
               </p>
             </section>
 
@@ -610,10 +610,23 @@ export const ORDView: React.FC<ORDViewProps> = () => {
               </p>
             </section>
 
+            {/* Section 7B: Hub 2 Flight Simulator & SI Physics */}
+            <section className="space-y-1.5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-900">
+                7B. Hub 2 — Golf Resistance Ball Discovery Studio (Approved As-Is Specification)
+              </h2>
+              <p>
+                Built from the Google Stitch Mobile Flight Simulator prototype and Engineering Design MVP: integrates Hub 1 swing footage via <code>POST /api/ai/video-flight-telemetry</code> (<code>gemini-4-hydrogen</code>), persists shot logs at <code>/api/flight-shots</code>, models 4 dimple geometries (332 Tour, 392 Low-Drag, 318 High-Lift, 280 Resistance), <code>0.00–3.00 lb</code> swing resistance load, 3D relative wind vector (<code>0–30 mph</code>), ISA barometric altitude (<code>0–8,000 ft</code>), uphill/downhill slope plane (<code>-45 to +45 ft</code>), Strike Quality &amp; Fairway Turf roll, plus collapsible Pre-Impact Club Length Fit &amp; 14-in Pivot Swing Weight diagnostics.
+              </p>
+              <p>
+                <strong>Fixed Telemetry Canvas Scale Baseline &amp; 1:1 Notice:</strong> Side View renders <code>0–350 yd</code> downrange × <code>0–60 yd</code> height and Top-Down Tracer renders <code>0–350 yd</code> × <code>±30 yd</code> lateral. Hub 2 displays an explicit plain-language notice clarifying for non-technical users why height/lateral axes are visually stretched compared to a flat <code>1:1</code> real-life side view while all printed yardage, apex, hang time, and spin metrics remain true real-world values.
+              </p>
+            </section>
+
             {/* Section 8: Formal Sign-Off Matrix */}
             <section className="space-y-2 pt-2 border-t border-slate-300">
               <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-900">
-                8. Formal Stakeholder & Scientific Authority Sign-Off Matrix
+                8. Formal Stakeholder &amp; Scientific Authority Sign-Off Matrix
               </h2>
               <div className="overflow-x-auto border border-slate-200 rounded-lg bg-white">
                 <table className="w-full text-left text-[11px]">
@@ -630,30 +643,30 @@ export const ORDView: React.FC<ORDViewProps> = () => {
                     <tr>
                       <td className="p-2 font-bold text-slate-900">Project Management Team</td>
                       <td className="p-2">PMO Lead / Project Director</td>
-                      <td className="p-2 text-center font-bold text-emerald-800 bg-emerald-50">APPROVED</td>
-                      <td className="p-2 text-slate-600">Nov 4, 2026</td>
-                      <td className="p-2 text-slate-600">Operational readiness, timeline, and rollout authorization.</td>
+                      <td className="p-2 text-center font-bold text-emerald-800 bg-emerald-50">APPROVED (PRD)</td>
+                      <td className="p-2 text-slate-600">Nov 16, 2026</td>
+                      <td className="p-2 text-slate-600">PRD v3.1 as-is baseline approved; remaining ORD production gates tracked for final sign-off.</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-bold text-slate-900">Lead Computer Scientist</td>
                       <td className="p-2">Principal Research Scientist</td>
                       <td className="p-2 text-center font-bold text-emerald-800 bg-emerald-50">CERTIFIED</td>
-                      <td className="p-2 text-slate-600">Nov 4, 2026</td>
-                      <td className="p-2 text-slate-600">Methodology, 76 Mom-Test questions, Cloud AI extraction schema.</td>
+                      <td className="p-2 text-slate-600">Nov 16, 2026</td>
+                      <td className="p-2 text-slate-600">76 Mom-Test Qs, gemini-3.8-flash &amp; gemini-4-hydrogen pipelines, SI 3D ODE calibration.</td>
                     </tr>
                     <tr>
                       <td className="p-2 font-bold text-slate-900">Lead Software Engineer</td>
                       <td className="p-2">Full-Stack Software Engineer</td>
                       <td className="p-2 text-center font-bold text-emerald-800 bg-emerald-50">VERIFIED</td>
-                      <td className="p-2 text-slate-600">Nov 4, 2026</td>
-                      <td className="p-2 text-slate-600">WebRTC engine, dual persistence, ergonomic layout, 0 lint/compile errors.</td>
+                      <td className="p-2 text-slate-600">Nov 16, 2026</td>
+                      <td className="p-2 text-slate-600">Hub 1 + Hub 2 full-stack build, /api/flight-shots, 0 lint/compile errors.</td>
                     </tr>
                     <tr>
-                      <td className="p-2 font-bold text-slate-900">Stakeholder Review Board</td>
-                      <td className="p-2">Product & Commercial Stakeholders</td>
+                      <td className="p-2 font-bold text-slate-900">Executive &amp; Stakeholder Board</td>
+                      <td className="p-2">Office of the Executive Director</td>
                       <td className="p-2 text-center font-bold text-emerald-800 bg-emerald-50">ACCEPTED</td>
-                      <td className="p-2 text-slate-600">Nov 4, 2026</td>
-                      <td className="p-2 text-slate-600">Hypotheses validation criteria and commercial research objectives.</td>
+                      <td className="p-2 text-slate-600">Nov 9, 2026</td>
+                      <td className="p-2 text-slate-600">N=20 empirical report, $250k seed round, and APA 7th compliance accepted.</td>
                     </tr>
                   </tbody>
                 </table>

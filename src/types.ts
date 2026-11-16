@@ -182,10 +182,13 @@ export type DimpleProfileId =
   | 'high_lift_318'
   | 'resistance_flow_280';
 
+export type StrikeQuality = 'centered' | 'slightly_off' | 'toe_heel';
+export type FairwayFirmness = 'soft' | 'normal' | 'firm';
+
 export interface FlightTrajectoryPoint {
   x: number; // downrange yards
-  y: number; // altitude yards
-  z: number; // lateral yards (- draw / + fade)
+  y: number; // altitude yards above tee
+  z: number; // lateral yards (- left/draw, + right/fade)
   t: number; // elapsed seconds
 }
 
@@ -199,6 +202,9 @@ export interface AerodynamicMetrics {
   landingAngleDeg: number;
   resistanceDeltaMph: number;
   dimpleEfficiencyGainPct: number;
+  airDensityKgM3: number;
+  effectiveWindHeadMph: number;
+  effectiveWindCrossMph: number;
 }
 
 export interface FlightShotTelemetry {
@@ -215,6 +221,12 @@ export interface FlightShotTelemetry {
   attackAngle: number;
   swingResistanceLbs: number;
   dimpleProfile: DimpleProfileId;
+  strikeQuality?: StrikeQuality;
+  fairwayFirmness?: FairwayFirmness;
+  windSpeedMph?: number;
+  windDirectionDeg?: number;
+  altitudeFt?: number;
+  slopeFt?: number;
   carry: number;
   total: number;
   apex: number;
